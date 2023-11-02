@@ -30,7 +30,7 @@ const Property = ({
     <Link to={`/property/${externalID}`}>
       <Flex
         flexWrap="wrap"
-        w={["280px", "385px", "385px", "385px", "385px", "385px"]}
+        w={["280px", "300px", "385px", "385px", "385px", "385px"]}
         px="2"
         pt="0"
         pb="8"
@@ -38,7 +38,7 @@ const Property = ({
       >
         <Box>
           <Image
-            w={["280px", "385px", "385px", "385px", "385px", "385px"]}
+            w={["280px", "300px", "385px", "385px", "385px", "385px"]}
             h="285px"
             src={coverPhoto ? coverPhoto.url : "./images/house.jpg"}
             alt="house"

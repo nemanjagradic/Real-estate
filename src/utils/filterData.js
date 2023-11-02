@@ -124,4 +124,18 @@ export const filterData = [
     placeholder: "Property Type",
     queryName: "categoryExternalID",
   },
+  {
+    type: "checkbox",
+    label: "Has Panorama",
+    queryName: "hasPanorama",
+    value: false,
+    onChange: (value) => !value,
+  },
+  {
+    type: "checkbox",
+    label: "Has Floor Plan",
+    queryName: "hasFloorPlan",
+    value: false,
+    onChange: (value) => !value,
+  },
 ];

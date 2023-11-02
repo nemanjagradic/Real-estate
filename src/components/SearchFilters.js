@@ -55,36 +55,56 @@ const SearchFilters = () => {
   }, [searchTerm]);
 
   return (
-    <Flex bg="beige" p="4" justifyContent="center" flexWrap="wrap">
-      {filters?.map((filter) => (
-        <Box key={filter.queryName}>
-          <Select
-            onChange={(e) => {
-              setUpdatedFilterValues({
-                ...updatedFilterValues,
-                [filter.queryName]: e.target.value,
-              });
-            }}
-            placeholder={filter.placeholder}
-            w="fit-content"
-            p="2"
-          >
-            {filter?.items?.map((item) => (
-              <option value={item.value} key={item.value}>
-                {item.name}
-              </option>
-            ))}
-          </Select>
-        </Box>
-      ))}
-      <Flex flexDir="column">
+    <>
+      <Flex bg="beige" pt="20px" px="40px" flexWrap="wrap">
+        {filters.map((filter) => (
+          <Box p="2" key={filter.queryName}>
+            {filter.type === "checkbox" ? (
+              <Box display="flex" alignItems="center">
+                <label style={{ marginRight: "10px" }}>{filter.label}</label>
+                <input
+                  style={{ width: "15px", height: "15px" }}
+                  type="checkbox"
+                  onFocus={{}}
+                  checked={updatedFilterValues[filter.queryName] === "true"}
+                  onChange={(e) =>
+                    setUpdatedFilterValues({
+                      ...updatedFilterValues,
+                      [filter.queryName]: e.target.checked ? "true" : "false",
+                    })
+                  }
+                />
+              </Box>
+            ) : (
+              <Select
+                onChange={(e) => {
+                  setUpdatedFilterValues({
+                    ...updatedFilterValues,
+                    [filter.queryName]: e.target.value,
+                  });
+                }}
+                placeholder={filter.placeholder}
+                w="fit-content"
+              >
+                {filter?.items?.map((item) => (
+                  <option value={item.value} key={item.value}>
+                    {item.name}
+                  </option>
+                ))}
+              </Select>
+            )}
+          </Box>
+        ))}
+      </Flex>
+      <Flex bg="beige" w="100%" flexDir="column" justify="center" pb="30px">
         <Button
           onClick={() => setShowLocations(!showLocations)}
           border="1px"
           borderColor="gray.200"
           bg="beige"
+          margin="0 auto"
+          width="150px"
           _hover={{ bg: "darkerBeige" }}
-          marginTop="2"
         >
           Search Location
         </Button>
@@ -94,6 +114,7 @@ const SearchFilters = () => {
               placeholder="Type Here"
               value={searchTerm}
               w="300px"
+              margin="0 auto"
               focusBorderColor="gray.300"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -153,7 +174,7 @@ const SearchFilters = () => {
           </Flex>
         )}
       </Flex>
-    </Flex>
+    </>
   );
 };
 

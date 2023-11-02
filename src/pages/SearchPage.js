@@ -43,10 +43,12 @@ const SearchPage = () => {
       const roomsMin = searchParams.get("roomsMin") || "0";
       const sort = searchParams.get("sort") || "price-desc";
       const areaMax = searchParams.get("areaMax") || "35000";
+      const hasPanorama = searchParams.get("hasPanorama") || "false";
+      const hasFloorPlan = searchParams.get("hasFloorPlan") || "false";
 
       setLoading(true);
       const data = await fetchApi(
-        `${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}`
+        `${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}&hasFloorPlan=${hasFloorPlan}&hasPanorama=${hasPanorama}`
       );
 
       setProperties(data?.hits);
@@ -58,6 +60,7 @@ const SearchPage = () => {
   return (
     <Box mt="60px">
       <Flex
+        width="100%"
         cursor="pointer"
         bg={searchFilters ? "darkerBeige" : "beige"}
         borderBottom="1px"
@@ -75,15 +78,15 @@ const SearchPage = () => {
       {searchFilters && <SearchFilters />}
       <Box
         margin="0 auto"
-        width={{ base: "300px", sm: "500px", lg: "850px", xl: "1200px" }}
+        width={{ base: "300px", sm: "85%", lg: "850px", xl: "1200px" }}
       >
         <Text
-          margin="0 auto"
+          margin={{ sm: "0", lg: "0 auto" }}
           fontSize="2xl"
           p="4"
           pl="2"
           fontWeight="bold"
-          width={{ base: "300px", sm: "500px", lg: "850px", xl: "1200px" }}
+          width={{ base: "300px", sm: "85%", lg: "850px", xl: "1200px" }}
         >
           Properties {searchParams.get("purpose")}
         </Text>

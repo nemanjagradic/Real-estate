@@ -126,12 +126,12 @@ export const filterData = [
   },
   {
     type: "checkbox",
-    label: "Has Panorama",
+    label: "Panorama",
     queryName: "hasPanorama",
   },
   {
     type: "checkbox",
-    label: "Has Floor Plan",
+    label: "Floor Plan",
     queryName: "hasFloorPlan",
   },
 ];

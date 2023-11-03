@@ -26,6 +26,12 @@ const SearchFilters = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const clearFilters = () => {
+    setUpdatedFilterValues({});
+    const newUrl = `${location.pathname}`;
+    navigate(newUrl);
+  };
+
   useEffect(() => {
     const path = location.pathname;
     const search = new URLSearchParams(location.search);
@@ -95,6 +101,18 @@ const SearchFilters = () => {
             )}
           </Box>
         ))}
+        <Box flex="1">
+          <Button
+            bg="beige"
+            float="right"
+            marginRight="34px"
+            _hover={{ bg: "darkerBeige" }}
+            type="button"
+            onClick={clearFilters}
+          >
+            Clear Filters
+          </Button>
+        </Box>
       </Flex>
       <Flex bg="beige" w="100%" flexDir="column" justify="center" pb="30px">
         <Button

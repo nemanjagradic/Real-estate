@@ -71,7 +71,6 @@ const SearchFilters = () => {
                 <input
                   style={{ width: "15px", height: "15px" }}
                   type="checkbox"
-                  onFocus={{}}
                   checked={updatedFilterValues[filter.queryName] === "true"}
                   onChange={(e) =>
                     setUpdatedFilterValues({

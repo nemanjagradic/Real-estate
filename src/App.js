@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import RootLayoutPage from "./pages/RootLayoutPage";
-import HomePage, { loader as homeLoader } from "./pages/HomePage";
+import HomePage from "./pages/HomePage";
 import { RouterProvider } from "react-router-dom";
 import SearchPage from "./pages/SearchPage";
 import PropertyPage, { loader as loadProperty } from "./pages/PropertyPage";
@@ -15,7 +15,6 @@ function App() {
         {
           index: true,
           element: <HomePage />,
-          loader: homeLoader,
         },
         { path: "/search", element: <SearchPage /> },
         {

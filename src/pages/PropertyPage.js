@@ -98,7 +98,7 @@ const PropertyPage = () => {
           )}
         </Flex>
         <Box>
-          {amenities?.length && (
+          {amenities?.length > 0 && (
             <Text fontSize="2xl" fontWeight="black" mt="3" mb="1">
               Amenities
             </Text>

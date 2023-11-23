@@ -1,7 +1,8 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import { Link, useLoaderData } from "react-router-dom";
+import { Box, Button, Flex, Text, Spinner } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import { baseUrl, fetchApi } from "../utils/fetchApi";
 import Property from "../components/Property";
+import { useEffect, useState } from "react";
 
 const Banner = ({
   imageUrl,
@@ -49,7 +50,26 @@ const Banner = ({
 };
 
 const HomePage = () => {
-  const { propertyForRent, propertyForSale } = useLoaderData();
+  const [propertyForSale, setPropertyForSale] = useState();
+  const [propertyForRent, setPropertyForRent] = useState();
+  const [loading, setLoading] = useState(false);
+  // const { propertyForRent, propertyForSale } = useLoaderData();
+
+  useEffect(() => {
+    const loadProperties = async () => {
+      setLoading(true);
+      const propertyForSale = await fetchApi(
+        `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`
+      );
+      const propertyForRent = await fetchApi(
+        `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`
+      );
+      setPropertyForSale(propertyForSale);
+      setPropertyForRent(propertyForRent);
+      setLoading(false);
+    };
+    loadProperties();
+  }, []);
 
   return (
     <Box mt="80px">
@@ -63,38 +83,62 @@ const HomePage = () => {
         link="/search?purpose=for-rent"
         imageUrl="https://bayut-production.s3.eu-central-1.amazonaws.com/image/145426814/33973352624c48628e41f2ec460faba4"
       ></Banner>
-      <Flex justify="center" flexWrap="wrap">
-        {propertyForRent.hits?.map((property) => (
-          <Property property={property} key={property.id} />
-        ))}
-      </Flex>
+      {loading ? (
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+          margin="100px auto"
+          display="block"
+        />
+      ) : (
+        <Flex justify="center" flexWrap="wrap">
+          {propertyForRent?.hits?.map((property) => (
+            <Property property={property} key={property.id} />
+          ))}
+        </Flex>
+      )}
       <Banner
         purpose="Buy a home"
         title1=" Find, Buy & Own Your"
         title2="Dream Home"
         desc1="Explore from Apartments, land, builder floors, villas and more"
         buttonText="Explore Buying"
-        linkName="/search?purpose=for-sale"
+        link="/search?purpose=for-sale"
         imageUrl="https://bayut-production.s3.eu-central-1.amazonaws.com/image/110993385/6a070e8e1bae4f7d8c1429bc303d2008"
       />
-      <Flex justify="center" flexWrap="wrap">
-        {propertyForSale.hits?.map((property) => (
-          <Property property={property} key={property.id} />
-        ))}
-      </Flex>
+      {loading ? (
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+          margin="100px auto"
+          display="block"
+        />
+      ) : (
+        <Flex justify="center" flexWrap="wrap">
+          {propertyForSale?.hits?.map((property) => (
+            <Property property={property} key={property.id} />
+          ))}
+        </Flex>
+      )}
     </Box>
   );
 };
 
 export default HomePage;
 
-export const loader = async ({ params, request }) => {
-  const propertyForSale = await fetchApi(
-    `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`
-  );
-  const propertyForRent = await fetchApi(
-    `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`
-  );
+// export const loader = async ({ params, request }) => {
+//   const propertyForSale = await fetchApi(
+//     `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`
+//   );
+//   const propertyForRent = await fetchApi(
+//     `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`
+//   );
 
-  return { propertyForSale, propertyForRent };
-};
+//   return { propertyForSale, propertyForRent };
+// };

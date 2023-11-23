@@ -113,14 +113,19 @@ const SearchFilters = () => {
           </Button>
         </Box>
       </Flex>
-      <Flex bg="beige" w="100%" flexDir="column" justify="center" pb="30px">
+      <Flex
+        bg="beige"
+        flexDir="column"
+        justifyContent="center"
+        alignItems="center"
+        width="100%"
+      >
         <Button
           onClick={() => setShowLocations(!showLocations)}
           border="1px"
           borderColor="gray.200"
           bg="beige"
-          margin="0 auto"
-          width="150px"
+          w="300px"
           _hover={{ bg: "darkerBeige" }}
         >
           Search Location
@@ -131,7 +136,6 @@ const SearchFilters = () => {
               placeholder="Type Here"
               value={searchTerm}
               w="300px"
-              margin="0 auto"
               focusBorderColor="gray.300"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -148,7 +152,7 @@ const SearchFilters = () => {
             )}
             {loading && <Spinner margin="auto" marginTop="3" />}
             {showLocations && (
-              <Box height="220px" overflow="auto">
+              <Box height="220px" overflow="auto" my="3" width="300px">
                 {locationData?.map((location) => (
                   <Box
                     key={location.id}

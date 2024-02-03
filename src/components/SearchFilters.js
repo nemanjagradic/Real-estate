@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { MdCancel } from "react-icons/md";
 import { filterData } from "../utils/filterData";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import noResults from "../svg/noresult.svg";
 import { fetchApi, baseUrl } from "../utils/fetchApi";
 
@@ -25,6 +25,7 @@ const SearchFilters = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const clearFilters = () => {
     setUpdatedFilterValues({});
@@ -34,16 +35,16 @@ const SearchFilters = () => {
 
   useEffect(() => {
     const path = location.pathname;
-    const search = new URLSearchParams(location.search);
 
     Object.entries(updatedFilterValues).forEach(([name, value]) => {
       if (value) {
-        search.set(name, value);
+        searchParams.set(name, value);
+      } else {
+        searchParams.delete(name);
       }
     });
-
-    navigate(`${path}?${search}`);
-  }, [updatedFilterValues, navigate, location.pathname, location.search]);
+    navigate(`${path}?${searchParams}`);
+  }, [updatedFilterValues, navigate, location.pathname, searchParams]);
 
   useEffect(() => {
     if (searchTerm !== "") {
@@ -57,6 +58,8 @@ const SearchFilters = () => {
       };
 
       fetchData();
+    } else {
+      setLocationData([]);
     }
   }, [searchTerm]);
 
@@ -71,11 +74,11 @@ const SearchFilters = () => {
                 <input
                   style={{ width: "15px", height: "15px" }}
                   type="checkbox"
-                  checked={updatedFilterValues[filter.queryName] === "true"}
+                  checked={updatedFilterValues[filter.queryName]}
                   onChange={(e) =>
                     setUpdatedFilterValues({
                       ...updatedFilterValues,
-                      [filter.queryName]: e.target.checked ? "true" : "false",
+                      [filter.queryName]: e.target.checked,
                     })
                   }
                 />
@@ -119,6 +122,7 @@ const SearchFilters = () => {
         justifyContent="center"
         alignItems="center"
         width="100%"
+        pb={5}
       >
         <Button
           onClick={() => setShowLocations(!showLocations)}

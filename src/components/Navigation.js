@@ -18,23 +18,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Navigation = () => {
-  const [showResMenu, setShowResMenu] = useState(false);
   const [isShowMenu, setIsShowMenu] = useState(false);
-
   const toogleMenu = () => {
     setIsShowMenu((prevState) => !prevState);
   };
-
-  const showMenu = () => {
-    if (window.innerWidth < 1000) {
-      setShowResMenu(true);
-    }
-    if (window.innerWidth > 1000) {
-      setShowResMenu(false);
-    }
-  };
-
-  window.addEventListener("resize", showMenu);
 
   return (
     <Box pos="relative" w="100%">
@@ -55,73 +42,70 @@ const Navigation = () => {
           <Link to="/">realestate.com</Link>
         </Box>
         <Spacer />
-        {showResMenu ? (
-          <Box>
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                icon={isShowMenu ? <AiOutlineClose /> : <FcMenu />}
-                variant="outline"
-                onClick={toogleMenu}
-                _expanded={{ bg: "blue.400" }}
-              />
-              <MenuList>
-                <Link to="/">
-                  <MenuItem icon={<FcHome />}>Home</MenuItem>
-                </Link>
-                <Link to="/search">
-                  <MenuItem icon={<BsSearch />}>Search</MenuItem>
-                </Link>
-                <MenuDivider />
-                <Link to="/search?purpose=for-sale">
-                  <MenuItem icon={<FcAbout />}>Buy Property</MenuItem>
-                </Link>
-                <Link to="/search?purpose=for-rent">
-                  <MenuItem icon={<FiKey />}>Rent Property</MenuItem>
-                </Link>
-              </MenuList>
-            </Menu>
-          </Box>
-        ) : (
-          <Box>
-            <Text
-              display="inline-block"
-              mx={5}
-              fontSize="lg"
-              fontWeight="medium"
-              _hover={{ color: "blue.400" }}
-            >
-              <Link to="/">Home</Link>
-            </Text>
-            <Text
-              display="inline-block"
-              mx={5}
-              fontSize="lg"
-              fontWeight="medium"
-              _hover={{ color: "blue.400" }}
-            >
-              <Link to="search">Search</Link>
-            </Text>
-            <Text
-              display="inline-block"
-              mx={5}
-              fontSize="lg"
-              fontWeight="medium"
-              _hover={{ color: "blue.400" }}
-            >
-              <Link to="search?purpose=for-sale">Buy Property</Link>
-            </Text>
-            <Text
-              display="inline-block"
-              ml={5}
-              fontSize="lg"
-              fontWeight="medium"
-              _hover={{ color: "blue.400" }}
-            >
-              <Link to="search?purpose=for-rent">Rent Property</Link>
-            </Text>
-          </Box>
-        )}
+        <Box hideFrom="md">
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              icon={isShowMenu ? <AiOutlineClose /> : <FcMenu />}
+              variant="outline"
+              onClick={toogleMenu}
+              _expanded={{ bg: "blue.400" }}
+            />
+            <MenuList>
+              <Link to="/">
+                <MenuItem icon={<FcHome />}>Home</MenuItem>
+              </Link>
+              <Link to="/search">
+                <MenuItem icon={<BsSearch />}>Search</MenuItem>
+              </Link>
+              <MenuDivider />
+              <Link to="/search?purpose=for-sale">
+                <MenuItem icon={<FcAbout />}>Buy Property</MenuItem>
+              </Link>
+              <Link to="/search?purpose=for-rent">
+                <MenuItem icon={<FiKey />}>Rent Property</MenuItem>
+              </Link>
+            </MenuList>
+          </Menu>
+        </Box>
+        <Box hideBelow="md">
+          <Text
+            display="inline-block"
+            mx={5}
+            fontSize="lg"
+            fontWeight="medium"
+            _hover={{ color: "blue.400" }}
+          >
+            <Link to="/">Home</Link>
+          </Text>
+          <Text
+            display="inline-block"
+            mx={5}
+            fontSize="lg"
+            fontWeight="medium"
+            _hover={{ color: "blue.400" }}
+          >
+            <Link to="search">Search</Link>
+          </Text>
+          <Text
+            display="inline-block"
+            mx={5}
+            fontSize="lg"
+            fontWeight="medium"
+            _hover={{ color: "blue.400" }}
+          >
+            <Link to="search?purpose=for-sale">Buy Property</Link>
+          </Text>
+          <Text
+            display="inline-block"
+            ml={5}
+            fontSize="lg"
+            fontWeight="medium"
+            _hover={{ color: "blue.400" }}
+          >
+            <Link to="search?purpose=for-rent">Rent Property</Link>
+          </Text>
+        </Box>
       </Flex>
     </Box>
   );

@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import { RouterProvider } from "react-router-dom";
 import SearchPage from "./pages/SearchPage";
 import PropertyPage, { loader as loadProperty } from "./pages/PropertyPage";
+import ErrorPage from "./pages/ErrorPage";
 import "./App.css";
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     {
       path: "/",
       element: <RootLayoutPage />,
+      errorElement: <ErrorPage />,
       children: [
         {
           index: true,

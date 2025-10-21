@@ -1,5 +1,21 @@
-export const filterData = [
+type SelectFilter = {
+  type: "select";
+  items: { name: string; value: string }[];
+  placeholder: string;
+  queryName: string;
+};
+
+type CheckboxFilter = {
+  type: "checkbox";
+  label: string;
+  queryName: string;
+};
+
+export type FilterItem = SelectFilter | CheckboxFilter;
+
+export const filterData: FilterItem[] = [
   {
+    type: "select",
     items: [
       { name: "Buy", value: "for-sale" },
       { name: "Rent", value: "for-rent" },
@@ -8,6 +24,7 @@ export const filterData = [
     queryName: "purpose",
   },
   {
+    type: "select",
     items: [
       { name: "Daily", value: "daily" },
       { name: "Weekly", value: "weekly" },
@@ -18,6 +35,7 @@ export const filterData = [
     queryName: "rentFrequency",
   },
   {
+    type: "select",
     items: [
       { name: "10,000", value: "10000" },
       { name: "20,000", value: "20000" },
@@ -31,6 +49,7 @@ export const filterData = [
     queryName: "minPrice",
   },
   {
+    type: "select",
     items: [
       { name: "50,000", value: "50000" },
       { name: "60,000", value: "60000" },
@@ -53,6 +72,7 @@ export const filterData = [
     queryName: "maxPrice",
   },
   {
+    type: "select",
     items: [
       { name: "Lowest Price", value: "price-asc" },
       { name: "Highest Price", value: "price-des" },
@@ -65,6 +85,7 @@ export const filterData = [
     queryName: "sort",
   },
   {
+    type: "select",
     items: [
       { name: "1000", value: "1000" },
       { name: "2000", value: "2000" },
@@ -78,6 +99,7 @@ export const filterData = [
     queryName: "areaMax",
   },
   {
+    type: "select",
     items: [
       { name: "1", value: "1" },
       { name: "2", value: "2" },
@@ -94,6 +116,7 @@ export const filterData = [
     queryName: "roomsMin",
   },
   {
+    type: "select",
     items: [
       { name: "1", value: "1" },
       { name: "2", value: "2" },
@@ -110,6 +133,7 @@ export const filterData = [
     queryName: "bathsMin",
   },
   {
+    type: "select",
     items: [
       { name: "Apartment", value: "4" },
       { name: "Townhouses", value: "16" },

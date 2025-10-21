@@ -5,9 +5,10 @@ import { RouterProvider } from "react-router-dom";
 import SearchPage from "./pages/SearchPage";
 import PropertyPage, { loader as loadProperty } from "./pages/PropertyPage";
 import ErrorPage from "./pages/ErrorPage";
+import { JSX } from "react";
 import "./App.css";
 
-function App() {
+function App(): JSX.Element {
   const router = createBrowserRouter([
     {
       path: "/",

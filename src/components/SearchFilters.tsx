@@ -14,13 +14,24 @@ import { filterData } from "../utils/filterData";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import noResults from "../svg/noresult.svg";
 import { fetchApi, baseUrl } from "../utils/fetchApi";
+import {
+  AutoCompleteLocationResponseSchema,
+  TAutoCompleteLocation,
+  TAutoCompleteLocationResponseSchema,
+} from "../schemas/autoCompleteLocationSchema";
 
 const SearchFilters = () => {
   const [filters] = useState(filterData);
   const [searchTerm, setSearchTerm] = useState("");
-  const [locationData, setLocationData] = useState();
+  const [locationData, setLocationData] =
+    useState<TAutoCompleteLocationResponseSchema>({ hits: [] });
   const [showLocations, setShowLocations] = useState(false);
-  const [updatedFilterValues, setUpdatedFilterValues] = useState({});
+  const [selectFilters, setSelectFilters] = useState<
+    Record<string, string | undefined>
+  >({});
+  const [checkboxFilters, setCheckboxFilters] = useState<
+    Record<string, boolean>
+  >({});
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -28,38 +39,46 @@ const SearchFilters = () => {
   const [searchParams] = useSearchParams();
 
   const clearFilters = () => {
-    setUpdatedFilterValues({});
-    const newUrl = `${location.pathname}`;
-    navigate(newUrl);
+    setSelectFilters({});
+    setCheckboxFilters({});
+    navigate(location.pathname);
   };
 
   useEffect(() => {
     const path = location.pathname;
 
-    Object.entries(updatedFilterValues).forEach(([name, value]) => {
-      if (value) {
-        searchParams.set(name, value);
-      } else {
-        searchParams.delete(name);
-      }
+    Object.entries(selectFilters).forEach(([name, value]) => {
+      if (value !== undefined) searchParams.set(name, value);
+      else searchParams.delete(name);
     });
+
+    Object.entries(checkboxFilters).forEach(([name, value]) => {
+      searchParams.set(name, value.toString());
+    });
+
     navigate(`${path}?${searchParams}`);
-  }, [updatedFilterValues, navigate, location.pathname, searchParams]);
+  }, [
+    selectFilters,
+    checkboxFilters,
+    navigate,
+    location.pathname,
+    searchParams,
+  ]);
 
   useEffect(() => {
     if (searchTerm !== "") {
       const fetchData = async () => {
         setLoading(true);
         const data = await fetchApi(
-          `${baseUrl}/auto-complete?query=${searchTerm}`
+          `${baseUrl}/auto-complete?query=${searchTerm}`,
+          AutoCompleteLocationResponseSchema
         );
         setLoading(false);
-        setLocationData(data?.hits);
+        setLocationData(data);
       };
-
       fetchData();
     } else {
-      setLocationData([]);
+      setLocationData({ hits: [] });
     }
   }, [searchTerm]);
 
@@ -74,10 +93,10 @@ const SearchFilters = () => {
                 <input
                   style={{ width: "15px", height: "15px" }}
                   type="checkbox"
-                  checked={updatedFilterValues[filter.queryName]}
+                  checked={!!checkboxFilters[filter.queryName]}
                   onChange={(e) =>
-                    setUpdatedFilterValues({
-                      ...updatedFilterValues,
+                    setCheckboxFilters({
+                      ...checkboxFilters,
                       [filter.queryName]: e.target.checked,
                     })
                   }
@@ -85,12 +104,12 @@ const SearchFilters = () => {
               </Box>
             ) : (
               <Select
-                onChange={(e) => {
-                  setUpdatedFilterValues({
-                    ...updatedFilterValues,
+                onChange={(e) =>
+                  setSelectFilters({
+                    ...selectFilters,
                     [filter.queryName]: e.target.value,
-                  });
-                }}
+                  })
+                }
                 placeholder={filter.placeholder}
                 w="fit-content"
               >
@@ -116,6 +135,7 @@ const SearchFilters = () => {
           </Button>
         </Box>
       </Flex>
+
       <Flex
         bg="beige"
         flexDir="column"
@@ -134,6 +154,7 @@ const SearchFilters = () => {
         >
           Search Location
         </Button>
+
         {showLocations && (
           <Flex flexDir="column" pos="relative" paddingTop="2">
             <Input
@@ -143,7 +164,7 @@ const SearchFilters = () => {
               focusBorderColor="gray.300"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            {searchTerm !== "" && (
+            {searchTerm && (
               <Icon
                 as={MdCancel}
                 pos="absolute"
@@ -157,12 +178,12 @@ const SearchFilters = () => {
             {loading && <Spinner margin="auto" marginTop="3" />}
             {showLocations && (
               <Box height="220px" overflow="auto" my="3" width="300px">
-                {locationData?.map((location) => (
+                {locationData.hits.map((location: TAutoCompleteLocation) => (
                   <Box
                     key={location.id}
                     onClick={() => {
-                      setUpdatedFilterValues({
-                        ...updatedFilterValues,
+                      setSelectFilters({
+                        ...selectFilters,
                         locationExternalIDs: location.externalID,
                       });
                       setShowLocations(false);
@@ -180,16 +201,16 @@ const SearchFilters = () => {
                     </Text>
                   </Box>
                 ))}
-                {!loading && !locationData?.length && (
+                {!loading && !locationData.hits.length && (
                   <Flex
                     justifyContent="center"
                     alignItems="center"
                     flexDir="column"
-                    marginTop="5"
-                    marginBottom="5"
+                    mt="5"
+                    mb="5"
                   >
                     <img src={noResults} alt="" />
-                    <Text fontSize="xl" marginTop="3">
+                    <Text fontSize="xl" mt="3">
                       Waiting to search!
                     </Text>
                   </Flex>

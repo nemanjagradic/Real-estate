@@ -3,10 +3,15 @@ import { Box, Flex, Text, Spacer, Avatar, Image } from "@chakra-ui/react";
 import { FaBed, FaBath } from "react-icons/fa";
 import { BsGridFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
+import { TPropertySummary } from "../utils/fetchApi";
 import millify from "millify";
 
-const Property = ({
-  property: {
+type PropertyProps = {
+  property: TPropertySummary;
+};
+
+const Property = ({ property }: PropertyProps) => {
+  const {
     coverPhoto,
     price,
     rentFrequency,
@@ -17,8 +22,8 @@ const Property = ({
     agency,
     isVerified,
     externalID,
-  },
-}) => {
+  } = property;
+
   const capitalizedTitle = title?.split(" ").map((word) => {
     return word[0]?.toUpperCase() + word.slice(1).toLowerCase();
   });

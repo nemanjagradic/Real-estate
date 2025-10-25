@@ -5,7 +5,13 @@ import SearchFilters from "../components/SearchFilters";
 import { useSearchParams } from "react-router-dom";
 import Property from "../components/Property";
 import noResults from "../svg/noresult.svg";
-import { fetchApi, baseUrl } from "../utils/fetchApi";
+import {
+  fetchApi,
+  baseUrl,
+  PropertySummaryResponseSchema,
+  TPropertySummaryResponseSchema,
+} from "../utils/fetchApi";
+import { parseSearchParams } from "../utils/parseSearchParams";
 
 const breakpoints = {
   base: "320px",
@@ -28,30 +34,33 @@ const SearchPage = () => {
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
 
-  const [properties, setProperties] = useState([]);
+  const [properties, setProperties] = useState<TPropertySummaryResponseSchema>({
+    hits: [],
+  });
 
   useEffect(() => {
     const fetchProperties = async () => {
-      const purpose = searchParams.get("purpose") || "for-rent";
-      const locationExternalIDs =
-        searchParams.get("locationExternalIDs") || "5002";
-      const categoryExternalID = searchParams.get("categoryExternalID") || "4";
-      const bathsMin = searchParams.get("bathsMin") || "0";
-      const rentFrequency = searchParams.get("rentFrequency") || "yearly";
-      const minPrice = searchParams.get("minPrice") || "0";
-      const maxPrice = searchParams.get("maxPrice") || "1000000";
-      const roomsMin = searchParams.get("roomsMin") || "0";
-      const sort = searchParams.get("sort") || "price-desc";
-      const areaMax = searchParams.get("areaMax") || "35000";
-      const hasPanorama = searchParams.get("hasPanorama") || "false";
-      const hasFloorPlan = searchParams.get("hasFloorPlan") || "false";
-
+      const {
+        purpose,
+        locationExternalIDs,
+        categoryExternalID,
+        bathsMin,
+        rentFrequency,
+        minPrice,
+        maxPrice,
+        roomsMin,
+        sort,
+        areaMax,
+        hasPanorama,
+        hasFloorPlan,
+      } = parseSearchParams(searchParams);
       setLoading(true);
       const data = await fetchApi(
-        `${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}&hasFloorPlan=${hasFloorPlan}&hasPanorama=${hasPanorama}`
+        `${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}&hasFloorPlan=${hasFloorPlan}&hasPanorama=${hasPanorama}`,
+        PropertySummaryResponseSchema
       );
 
-      setProperties(data?.hits);
+      setProperties(data);
       setLoading(false);
     };
     fetchProperties();
@@ -110,13 +119,13 @@ const SearchPage = () => {
               xl: "space-between",
             }}
           >
-            {properties.map((property) => (
+            {properties.hits.map((property) => (
               <Property property={property} key={property.id} />
             ))}
           </Flex>
         )}
       </Box>
-      {properties.length === 0 && !loading && (
+      {properties.hits.length === 0 && !loading && (
         <Flex
           justify="center"
           align="center"

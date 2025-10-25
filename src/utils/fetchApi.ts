@@ -1,32 +1,67 @@
-import { json } from "react-router-dom";
+import { z } from "zod";
 
 export const baseUrl = "https://bayut.p.rapidapi.com";
 
-type Property = {
-  coverPhoto: {
-    url: string;
-  };
-  price: number;
-  rentFrequency?: string;
-  rooms: number;
-  title: string;
-  baths: number;
-  area: number;
-  agency: {
-    logo: {
-      url: string;
-    };
-  };
-  isVerified: boolean;
-  externalID: string;
-  purpose: string;
-};
+const PropertySummary = z.object({
+  id: z.number(),
+  coverPhoto: z.object({
+    url: z.string(),
+  }),
+  price: z.number(),
+  rentFrequency: z.string().nullable().optional(),
+  rooms: z.number(),
+  title: z.string(),
+  baths: z.number(),
+  area: z.number(),
+  agency: z.object({
+    logo: z.object({
+      url: z.string(),
+    }),
+  }),
+  isVerified: z.boolean(),
+  externalID: z.string(),
+  purpose: z.string(),
+});
 
-type ApiResponse = {
-  hits: Property[];
-};
+const PropertyDetailsSchema = PropertySummary.extend({
+  description: z.string().nullable().optional(),
+  type: z.string().nullable().optional(),
+  furnishingStatus: z.string().nullable().optional(),
+  amenities: z
+    .array(z.object({ text: z.string() }))
+    .nullable()
+    .optional(),
 
-export const fetchApi = async <T = ApiResponse>(url: string): Promise<T> => {
+  photos: z
+    .array(
+      z.object({
+        url: z.string(),
+        orderIndex: z.number().nullable().optional(),
+      })
+    )
+    .nullable()
+    .optional(),
+});
+
+export type TPropertySummary = z.infer<typeof PropertySummary>;
+export type TPropertyDetails = z.infer<typeof PropertyDetailsSchema>;
+
+export const PropertySummaryResponseSchema = z.object({
+  hits: z.array(PropertySummary),
+});
+export const PropertyDetailsResponseSchema = PropertyDetailsSchema;
+
+export type TPropertySummaryResponseSchema = z.infer<
+  typeof PropertySummaryResponseSchema
+>;
+export type TPropertyDetailsResponseSchema = z.infer<
+  typeof PropertyDetailsResponseSchema
+>;
+
+export const fetchApi = async <T>(
+  url: string,
+  schema: z.ZodSchema<T>
+): Promise<T> => {
   try {
     const response = await fetch(url, {
       headers: {
@@ -35,14 +70,12 @@ export const fetchApi = async <T = ApiResponse>(url: string): Promise<T> => {
       },
     });
     if (!response.ok) {
-      throw json(
-        { message: "Could not fetch data" },
-        { status: response.status }
-      );
+      throw new Error(`Could not fetch data: ${response.status}`);
     }
 
-    const data = (await response.json()) as T;
-    return data;
+    const data = await response.json();
+    console.log(data);
+    return schema.parse(data);
   } catch (error) {
     console.error("Fetch error:", error);
     throw error;

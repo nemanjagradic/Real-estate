@@ -1,8 +1,25 @@
 import { Box, Button, Flex, Text, Spinner } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { baseUrl, fetchApi } from "../utils/fetchApi";
+import {
+  baseUrl,
+  fetchApi,
+  TPropertySummaryResponseSchema,
+  TPropertySummary,
+  PropertySummaryResponseSchema,
+} from "../utils/fetchApi";
 import Property from "../components/Property";
 import { useEffect, useState } from "react";
+
+type BannerProps = {
+  imageUrl: string;
+  purpose: string;
+  title1: string;
+  title2: string;
+  desc1: string;
+  desc2?: string;
+  link: string;
+  buttonText: string;
+};
 
 const Banner = ({
   imageUrl,
@@ -13,7 +30,7 @@ const Banner = ({
   desc2,
   link,
   buttonText,
-}) => {
+}: BannerProps) => {
   return (
     <Flex flexWrap="wrap" justifyContent="center" alignItems="center" m="10">
       <img src={imageUrl} width={500} height={300} alt="banner" />
@@ -50,23 +67,40 @@ const Banner = ({
 };
 
 const HomePage = () => {
-  const [propertyForSale, setPropertyForSale] = useState();
-  const [propertyForRent, setPropertyForRent] = useState();
+  const [propertyForSale, setPropertyForSale] =
+    useState<TPropertySummaryResponseSchema>({
+      hits: [],
+    });
+  const [propertyForRent, setPropertyForRent] =
+    useState<TPropertySummaryResponseSchema>({
+      hits: [],
+    });
   const [loading, setLoading] = useState(false);
   // const { propertyForRent, propertyForSale } = useLoaderData();
 
   useEffect(() => {
     const loadProperties = async () => {
-      setLoading(true);
-      const propertyForSale = await fetchApi(
-        `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`
-      );
-      const propertyForRent = await fetchApi(
-        `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`
-      );
-      setPropertyForSale(propertyForSale);
-      setPropertyForRent(propertyForRent);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const [propertyForSale, propertyForRent] = await Promise.all([
+          fetchApi(
+            `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`,
+            PropertySummaryResponseSchema
+          ),
+          fetchApi(
+            `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`,
+            PropertySummaryResponseSchema
+          ),
+        ]);
+
+        setPropertyForSale(propertyForSale);
+        setPropertyForRent(propertyForRent);
+        console.log(propertyForRent);
+      } catch (error) {
+        console.error("Failed to load properties", error);
+      } finally {
+        setLoading(false);
+      }
     };
     loadProperties();
   }, []);
@@ -95,7 +129,7 @@ const HomePage = () => {
         />
       ) : (
         <Flex justify="center" flexWrap="wrap">
-          {propertyForRent?.hits?.map((property) => (
+          {propertyForRent.hits.map((property: TPropertySummary) => (
             <Property property={property} key={property.id} />
           ))}
         </Flex>
@@ -121,7 +155,7 @@ const HomePage = () => {
         />
       ) : (
         <Flex justify="center" flexWrap="wrap">
-          {propertyForSale?.hits?.map((property) => (
+          {propertyForSale.hits.map((property: TPropertySummary) => (
             <Property property={property} key={property.id} />
           ))}
         </Flex>

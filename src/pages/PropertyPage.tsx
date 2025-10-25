@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import { fetchApi, baseUrl } from "../utils/fetchApi";
 import { Box, Flex, Spacer, Text, Avatar } from "@chakra-ui/react";
 import { FaBed, FaBath } from "react-icons/fa";
@@ -6,6 +6,10 @@ import { BsGridFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import millify from "millify";
 import ImageScrollBar from "../components/ImageScrollBar";
+import {
+  PropertyDetailsResponseSchema,
+  TPropertyDetails,
+} from "../utils/fetchApi";
 
 const PropertyPage = () => {
   const currentProperty = useLoaderData();
@@ -24,7 +28,7 @@ const PropertyPage = () => {
     furnishingStatus,
     amenities,
     photos,
-  } = currentProperty;
+  } = currentProperty as TPropertyDetails;
 
   return (
     <Box maxWidth={[380, 500, 700, 1000]} margin="auto" p="4" mt="80px">
@@ -98,14 +102,14 @@ const PropertyPage = () => {
           )}
         </Flex>
         <Box>
-          {amenities?.length > 0 && (
+          {Array.isArray(amenities) && amenities.length > 0 && (
             <Text fontSize="2xl" fontWeight="black" mt="3" mb="1">
               Amenities
             </Text>
           )}
           <Flex flexWrap="wrap">
-            {amenities?.map((item) =>
-              item.amenities.map((amenity) => (
+            {Array.isArray(amenities) &&
+              amenities.map((amenity) => (
                 <Text
                   fontWeight="bold"
                   color="blue.400"
@@ -118,8 +122,7 @@ const PropertyPage = () => {
                 >
                   {amenity.text}
                 </Text>
-              ))
-            )}
+              ))}
           </Flex>
         </Box>
       </Box>
@@ -129,10 +132,11 @@ const PropertyPage = () => {
 
 export default PropertyPage;
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = params.id;
   const currentProperty = await fetchApi(
-    `${baseUrl}/properties/detail?externalID=${id}`
+    `${baseUrl}/properties/detail?externalID=${id}`,
+    PropertyDetailsResponseSchema
   );
 
   return currentProperty;

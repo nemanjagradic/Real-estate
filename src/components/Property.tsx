@@ -3,7 +3,7 @@ import { Box, Flex, Text, Spacer, Avatar, Image } from "@chakra-ui/react";
 import { FaBed, FaBath } from "react-icons/fa";
 import { BsGridFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
-import { TPropertySummary } from "../utils/fetchApi";
+import { TPropertySummary } from "../types/propertyTypes";
 import millify from "millify";
 
 type PropertyProps = {

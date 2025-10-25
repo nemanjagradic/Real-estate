@@ -5,12 +5,9 @@ import SearchFilters from "../components/SearchFilters";
 import { useSearchParams } from "react-router-dom";
 import Property from "../components/Property";
 import noResults from "../svg/noresult.svg";
-import {
-  fetchApi,
-  baseUrl,
-  PropertySummaryResponseSchema,
-  TPropertySummaryResponseSchema,
-} from "../utils/fetchApi";
+import { fetchApi, baseUrl } from "../utils/fetchApi";
+import { PropertySummaryResponseSchema } from "../schemas/propertySchemas";
+import { TPropertySummaryResponseSchema } from "../types/propertyTypes";
 import { parseSearchParams } from "../utils/parseSearchParams";
 
 const breakpoints = {

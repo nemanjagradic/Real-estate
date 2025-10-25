@@ -1,12 +1,11 @@
 import { Box, Button, Flex, Text, Spinner } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import {
-  baseUrl,
-  fetchApi,
   TPropertySummaryResponseSchema,
   TPropertySummary,
-  PropertySummaryResponseSchema,
-} from "../utils/fetchApi";
+} from "../types/propertyTypes";
+import { PropertySummaryResponseSchema } from "../schemas/propertySchemas";
+import { fetchApi, baseUrl } from "../utils/fetchApi";
 import Property from "../components/Property";
 import { useEffect, useState } from "react";
 

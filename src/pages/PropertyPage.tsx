@@ -6,10 +6,8 @@ import { BsGridFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import millify from "millify";
 import ImageScrollBar from "../components/ImageScrollBar";
-import {
-  PropertyDetailsResponseSchema,
-  TPropertyDetails,
-} from "../utils/fetchApi";
+import { PropertyDetailsResponseSchema } from "../schemas/propertySchemas";
+import { TPropertyDetails } from "../types/propertyTypes";
 
 const PropertyPage = () => {
   const currentProperty = useLoaderData();

@@ -3,7 +3,6 @@ import { Box } from "@chakra-ui/react";
 const Footer = () => {
   return (
     <Box
-      align="center"
       borderTop="1px"
       textAlign="center"
       p="5"

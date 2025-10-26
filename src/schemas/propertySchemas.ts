@@ -33,6 +33,7 @@ export const PropertyDetailsSchema = PropertySummarySchema.extend({
   photos: z
     .array(
       z.object({
+        id: z.number(),
         url: z.string(),
         orderIndex: z.number().nullable().optional(),
       })

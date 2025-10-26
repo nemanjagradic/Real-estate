@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Flex, Box, Text, Icon, extendTheme, Spinner } from "@chakra-ui/react";
+import { Flex, Box, Text, Icon, Spinner } from "@chakra-ui/react";
 import { BsFilter } from "react-icons/bs";
 import SearchFilters from "../components/SearchFilters";
 import { useSearchParams } from "react-router-dom";
@@ -9,22 +9,6 @@ import { fetchApi, baseUrl } from "../utils/fetchApi";
 import { PropertySummaryResponseSchema } from "../schemas/propertySchemas";
 import { TPropertySummaryResponseSchema } from "../types/propertyTypes";
 import { parseSearchParams } from "../utils/parseSearchParams";
-
-const breakpoints = {
-  base: "320px",
-  sm: "400px",
-  md: "1000px",
-  lg: "1250px",
-  xl: "1400px",
-};
-
-export const theme = extendTheme({
-  colors: {
-    beige: "#f5f5dc",
-    darkerBeige: "#dcd5b9",
-  },
-  breakpoints,
-});
 
 const SearchPage = () => {
   const [searchFilters, setSearchFilters] = useState(false);

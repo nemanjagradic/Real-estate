@@ -61,33 +61,37 @@ const RightArrow = () => {
     </Flex>
   );
 };
-const ImageScrollBar = ({ items }) => {
+
+type ImageScrollBarProps = {
+  items: {
+    id: number;
+    url: string;
+  }[];
+};
+
+const ImageScrollBar = ({ items }: ImageScrollBarProps) => {
   return (
-    <ScrollMenu
-      LeftArrow={LeftArrow}
-      RightArrow={RightArrow}
-      style={{ overflow: "hidden" }}
-    >
-      {items.map((item) => (
-        <Box
-          width={[280, 400, 600, 890]}
-          itemID={item.id}
-          key={item.id}
-          overflow="hidden"
-          p="1"
-        >
-          <Image
-            src={item.url}
-            height={[380, 450, 500, 500]}
-            alt="Image Description"
-            style={{
-              objectFit: "cover",
-              width: "100%",
-            }}
-          />
-        </Box>
-      ))}
-    </ScrollMenu>
+    <Flex overflow="hidden">
+      <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
+        {items.map((item) => (
+          <Box
+            key={item.id}
+            itemID={item.id.toString()}
+            w={[280, 400, 600, 890]}
+            overflow="hidden"
+            p="1"
+          >
+            <Image
+              src={item.url}
+              h={[380, 450, 500, 500]}
+              alt="Image Description"
+              objectFit="cover"
+              w="100%"
+            />
+          </Box>
+        ))}
+      </ScrollMenu>
+    </Flex>
   );
 };
 export default ImageScrollBar;

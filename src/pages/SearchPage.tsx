@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Flex, Box, Text, Icon, Spinner } from "@chakra-ui/react";
 import { BsFilter } from "react-icons/bs";
 import SearchFilters from "../components/SearchFilters";
+import Pagination from "../components/Pagination";
 import { useSearchParams } from "react-router-dom";
 import Property from "../components/Property";
 import noResults from "../svg/noresult.svg";
@@ -13,11 +14,19 @@ import { parseSearchParams } from "../utils/parseSearchParams";
 const SearchPage = () => {
   const [searchFilters, setSearchFilters] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [active, setActive] = useState(Number(searchParams.get("page")) || 1);
+  const [totalPages, setTotalPages] = useState(0);
   const [properties, setProperties] = useState<TPropertySummaryResponseSchema>({
     hits: [],
+    nbPages: 0,
   });
+
+  const paginate = (pageNumber: number) => {
+    setActive(pageNumber);
+    searchParams.set("page", pageNumber.toString());
+    setSearchParams(searchParams);
+  };
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -34,16 +43,20 @@ const SearchPage = () => {
         areaMax,
         hasPanorama,
         hasFloorPlan,
+        page,
       } = parseSearchParams(searchParams);
+
       setLoading(true);
       const data = await fetchApi(
-        `${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}&hasFloorPlan=${hasFloorPlan}&hasPanorama=${hasPanorama}`,
+        `${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}&hasFloorPlan=${hasFloorPlan}&hasPanorama=${hasPanorama}&page=${page}`,
         PropertySummaryResponseSchema
       );
 
       setProperties(data);
+      setTotalPages(data.nbPages as number);
       setLoading(false);
     };
+
     fetchProperties();
   }, [searchParams]);
 
@@ -65,10 +78,11 @@ const SearchPage = () => {
         <Text>Search Property By Filters</Text>
         <Icon pl={2} width={7} as={BsFilter} />
       </Flex>
-      {searchFilters && <SearchFilters />}
+      {searchFilters && <SearchFilters setActive={setActive} />}
       <Box
         margin="0 auto"
-        width={{ base: "300px", sm: "85%", lg: "850px", xl: "1200px" }}
+        width={{ base: "90%", sm: "85%", lg: "850px", xl: "1200px" }}
+        maxW="1200px"
       >
         <Text
           margin={{ sm: "0", lg: "0 auto" }}
@@ -94,6 +108,7 @@ const SearchPage = () => {
           <Flex
             flexWrap="wrap"
             justifyContent={{
+              base: "center",
               sm: "center",
               md: "center",
               lg: "space-between",
@@ -106,6 +121,7 @@ const SearchPage = () => {
           </Flex>
         )}
       </Box>
+      <Pagination totalPages={totalPages} paginate={paginate} active={active} />
       {properties.hits.length === 0 && !loading && (
         <Flex
           justify="center"

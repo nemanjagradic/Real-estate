@@ -20,7 +20,11 @@ import {
   TAutoCompleteLocationResponseSchema,
 } from "../schemas/autoCompleteLocationSchema";
 
-const SearchFilters = () => {
+type SearchFiltersProps = {
+  setActive: React.Dispatch<React.SetStateAction<number>>;
+};
+
+const SearchFilters = ({ setActive }: SearchFiltersProps) => {
   const [filters] = useState(filterData);
   const [searchTerm, setSearchTerm] = useState("");
   const [locationData, setLocationData] =
@@ -41,6 +45,7 @@ const SearchFilters = () => {
   const clearFilters = () => {
     setSelectFilters({});
     setCheckboxFilters({});
+    setActive(1);
     navigate(location.pathname);
   };
 

@@ -44,5 +44,6 @@ export const PropertyDetailsSchema = PropertySummarySchema.extend({
 
 export const PropertySummaryResponseSchema = z.object({
   hits: z.array(PropertySummarySchema),
+  nbPages: z.number(),
 });
 export const PropertyDetailsResponseSchema = PropertyDetailsSchema;

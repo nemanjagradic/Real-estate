@@ -57,9 +57,11 @@ const PropertyPage = () => {
         <Text fontSize="lg" mb={2} fontWeight="bold">
           {title}
         </Text>
-        <Text lineHeight="2" color="gray.600">
-          {description}
-        </Text>
+        <Text
+          lineHeight="2"
+          color="gray.600"
+          dangerouslySetInnerHTML={{ __html: description as string }}
+        ></Text>
         <Flex
           flexWrap="wrap"
           textTransform="uppercase"

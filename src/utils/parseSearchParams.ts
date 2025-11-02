@@ -11,6 +11,7 @@ export const searchParamKeys = [
   "areaMax",
   "hasPanorama",
   "hasFloorPlan",
+  "page",
 ] as const;
 
 export type SearchParamsType = Partial<
@@ -32,4 +33,5 @@ export const parseSearchParams = (
   areaMax: params.get("areaMax") || "35000",
   hasPanorama: params.get("hasPanorama") || "false",
   hasFloorPlan: params.get("hasFloorPlan") || "false",
+  page: params.get("page") || "1",
 });

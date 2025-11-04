@@ -29,6 +29,7 @@ const LeftArrow = () => {
       mb="auto"
       mr="1"
       ml="0"
+      display={["none", "none", "flex"]}
     >
       <Icon
         as={FaArrowLeft}
@@ -57,6 +58,7 @@ const RightArrow = () => {
       mb="auto"
       ml="1"
       mr="0"
+      display={["none", "none", "flex"]}
     >
       <Icon
         as={FaArrowRight}
@@ -82,13 +84,14 @@ const ImageScrollBar = ({ items }: ImageScrollBarProps) => {
 
   return (
     <>
-      <Box overflow="hidden" margin="0 auto">
+      <Box overflow="hidden">
         <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
           {items.map((item) => (
             <Box
               key={item.id}
               itemID={item.id.toString()}
-              w={["90vw", "400px", "580px", "880px"]}
+              w={["90vw", "93vw", "82vw", "88vw", "880px", "880px"]}
+              maxW={["90vw", "93vw", "82vw", "88vw", "880px", "880px"]}
               mr="1"
               cursor="pointer"
               overflow="hidden"
@@ -97,7 +100,6 @@ const ImageScrollBar = ({ items }: ImageScrollBarProps) => {
               <Image
                 src={item.url}
                 alt="Property"
-                objectFit="cover"
                 w="100%"
                 h={["250px", "320px", "380px", "480px"]}
                 style={{ transition: "0.2s ease-in-out" }}

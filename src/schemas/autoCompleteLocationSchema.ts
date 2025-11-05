@@ -12,6 +12,6 @@ export const AutoCompleteLocationResponseSchema = z.object({
 
 export type TAutoCompleteLocation = z.infer<typeof AutoCompleteLocationSchema>;
 
-export type TAutoCompleteLocationResponseSchema = z.infer<
+export type TAutoCompleteLocationResponse = z.infer<
   typeof AutoCompleteLocationResponseSchema
 >;

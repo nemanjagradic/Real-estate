@@ -1,4 +1,3 @@
-import { LoaderFunctionArgs, useLoaderData } from "react-router-dom";
 import { fetchApi, baseUrl } from "../utils/fetchApi";
 import { Box, Flex, Spacer, Text, Avatar } from "@chakra-ui/react";
 import { FaBed, FaBath } from "react-icons/fa";
@@ -7,10 +6,30 @@ import { GoVerified } from "react-icons/go";
 import millify from "millify";
 import ImageScrollBar from "../components/ImageScrollBar";
 import { PropertyDetailsResponseSchema } from "../schemas/propertySchemas";
-import { TPropertyDetails } from "../types/propertyTypes";
+import {
+  TPropertyDetails,
+  TPropertyDetailsResponse,
+} from "../types/propertyTypes";
+import { useQuery } from "@tanstack/react-query";
+import PropertyDetailsSkeleton from "../UI/PropertyDetailsSkeleton";
+import { useParams } from "react-router-dom";
 
 const PropertyPage = () => {
-  const currentProperty = useLoaderData();
+  const { id: externalID } = useParams<{ id: string }>();
+
+  const { data, isLoading } = useQuery<TPropertyDetailsResponse>({
+    queryKey: ["propertyDetails", externalID],
+    queryFn: async () =>
+      await fetchApi(
+        `${baseUrl}/properties/detail?externalID=${externalID}`,
+        PropertyDetailsResponseSchema
+      ),
+  });
+
+  if (isLoading || !data) {
+    return <PropertyDetailsSkeleton />;
+  }
+
   const {
     price,
     rentFrequency,
@@ -26,7 +45,7 @@ const PropertyPage = () => {
     furnishingStatus,
     amenities,
     photos,
-  } = currentProperty as TPropertyDetails;
+  } = data as TPropertyDetails;
 
   return (
     <Box maxWidth={[380, 500, 700, 1000]} margin="auto" p="4" mt="80px">
@@ -131,13 +150,3 @@ const PropertyPage = () => {
 };
 
 export default PropertyPage;
-
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const id = params.id;
-  const currentProperty = await fetchApi(
-    `${baseUrl}/properties/detail?externalID=${id}`,
-    PropertyDetailsResponseSchema
-  );
-
-  return currentProperty;
-};

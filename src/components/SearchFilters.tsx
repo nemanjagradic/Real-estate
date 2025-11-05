@@ -17,8 +17,9 @@ import { fetchApi, baseUrl } from "../utils/fetchApi";
 import {
   AutoCompleteLocationResponseSchema,
   TAutoCompleteLocation,
-  TAutoCompleteLocationResponseSchema,
+  TAutoCompleteLocationResponse,
 } from "../schemas/autoCompleteLocationSchema";
+import { useQuery } from "@tanstack/react-query";
 
 type SearchFiltersProps = {
   setActive: React.Dispatch<React.SetStateAction<number>>;
@@ -27,8 +28,6 @@ type SearchFiltersProps = {
 const SearchFilters = ({ setActive }: SearchFiltersProps) => {
   const [filters] = useState(filterData);
   const [searchTerm, setSearchTerm] = useState("");
-  const [locationData, setLocationData] =
-    useState<TAutoCompleteLocationResponseSchema>({ hits: [] });
   const [showLocations, setShowLocations] = useState(false);
   const [selectFilters, setSelectFilters] = useState<
     Record<string, string | undefined>
@@ -36,7 +35,6 @@ const SearchFilters = ({ setActive }: SearchFiltersProps) => {
   const [checkboxFilters, setCheckboxFilters] = useState<
     Record<string, boolean>
   >({});
-  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,22 +68,18 @@ const SearchFilters = ({ setActive }: SearchFiltersProps) => {
     searchParams,
   ]);
 
-  useEffect(() => {
-    if (searchTerm !== "") {
-      const fetchData = async () => {
-        setLoading(true);
-        const data = await fetchApi(
-          `${baseUrl}/auto-complete?query=${searchTerm}`,
-          AutoCompleteLocationResponseSchema
-        );
-        setLoading(false);
-        setLocationData(data);
-      };
-      fetchData();
-    } else {
-      setLocationData({ hits: [] });
-    }
-  }, [searchTerm]);
+  const { data, isLoading } = useQuery<TAutoCompleteLocationResponse>({
+    queryKey: ["autocomplete", searchTerm],
+    queryFn: async () =>
+      await fetchApi(
+        `${baseUrl}/auto-complete?query=${searchTerm}`,
+        AutoCompleteLocationResponseSchema
+      ),
+    staleTime: 1000 * 60 * 5,
+    enabled: searchTerm !== "",
+  });
+
+  const locations = data?.hits ?? [];
 
   return (
     <>
@@ -180,10 +174,10 @@ const SearchFilters = ({ setActive }: SearchFiltersProps) => {
                 onClick={() => setSearchTerm("")}
               />
             )}
-            {loading && <Spinner margin="auto" marginTop="3" />}
+            {isLoading && <Spinner margin="auto" marginTop="3" />}
             {showLocations && (
               <Box height="220px" overflow="auto" my="3" width="300px">
-                {locationData.hits.map((location: TAutoCompleteLocation) => (
+                {locations.map((location: TAutoCompleteLocation) => (
                   <Box
                     key={location.id}
                     onClick={() => {
@@ -206,7 +200,7 @@ const SearchFilters = ({ setActive }: SearchFiltersProps) => {
                     </Text>
                   </Box>
                 ))}
-                {!loading && !locationData.hits.length && (
+                {!isLoading && !locations.length && (
                   <Flex
                     justifyContent="center"
                     alignItems="center"

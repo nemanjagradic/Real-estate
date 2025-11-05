@@ -1,13 +1,14 @@
-import { Box, Button, Flex, Text, Spinner } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import {
-  TPropertySummaryResponseSchema,
   TPropertySummary,
+  TPropertySummaryResponse,
 } from "../types/propertyTypes";
 import { PropertySummaryResponseSchema } from "../schemas/propertySchemas";
 import { fetchApi, baseUrl } from "../utils/fetchApi";
 import Property from "../components/Property";
-import { useEffect, useState } from "react";
+import PropertySkeleton from "../UI/PropertySkeleton";
+import { useQueries } from "@tanstack/react-query";
 
 type BannerProps = {
   imageUrl: string;
@@ -66,43 +67,32 @@ const Banner = ({
 };
 
 const HomePage = () => {
-  const [propertyForSale, setPropertyForSale] =
-    useState<TPropertySummaryResponseSchema>({
-      hits: [],
-    });
-  const [propertyForRent, setPropertyForRent] =
-    useState<TPropertySummaryResponseSchema>({
-      hits: [],
-    });
-  const [loading, setLoading] = useState(false);
-  // const { propertyForRent, propertyForSale } = useLoaderData();
-
-  useEffect(() => {
-    const loadProperties = async () => {
-      try {
-        setLoading(true);
-        const [propertyForSale, propertyForRent] = await Promise.all([
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ["properties", "for-sale"],
+        queryFn: (): Promise<TPropertySummaryResponse> =>
           fetchApi(
             `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`,
             PropertySummaryResponseSchema
           ),
+      },
+      {
+        queryKey: ["properties", "for-rent"],
+        queryFn: (): Promise<TPropertySummaryResponse> =>
           fetchApi(
             `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`,
             PropertySummaryResponseSchema
           ),
-        ]);
+      },
+    ],
+  });
 
-        setPropertyForSale(propertyForSale);
-        setPropertyForRent(propertyForRent);
-        console.log(propertyForRent);
-      } catch (error) {
-        console.error("Failed to load properties", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadProperties();
-  }, []);
+  const [saleQuery, rentQuery] = results;
+
+  const isLoading = saleQuery.isLoading || rentQuery.isLoading;
+
+  console.log(saleQuery, rentQuery);
 
   return (
     <Box mt="80px">
@@ -115,24 +105,16 @@ const HomePage = () => {
         buttonText="Explore Renting"
         link="/search?purpose=for-rent"
         imageUrl="https://bayut-production.s3.eu-central-1.amazonaws.com/image/145426814/33973352624c48628e41f2ec460faba4"
-      ></Banner>
-      {loading ? (
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="blue.500"
-          size="xl"
-          margin="100px auto"
-          display="block"
-        />
-      ) : (
-        <Flex justify="center" flexWrap="wrap">
-          {propertyForRent.hits.map((property: TPropertySummary) => (
-            <Property property={property} key={property.id} />
-          ))}
-        </Flex>
-      )}
+      />
+      <Flex justify="center" flexWrap="wrap">
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <PropertySkeleton key={i} />
+            ))
+          : rentQuery.data?.hits.map((property: TPropertySummary) => (
+              <Property property={property} key={property.id} />
+            ))}
+      </Flex>
       <Banner
         purpose="Buy a home"
         title1=" Find, Buy & Own Your"
@@ -142,36 +124,17 @@ const HomePage = () => {
         link="/search?purpose=for-sale"
         imageUrl="https://bayut-production.s3.eu-central-1.amazonaws.com/image/110993385/6a070e8e1bae4f7d8c1429bc303d2008"
       />
-      {loading ? (
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="blue.500"
-          size="xl"
-          margin="100px auto"
-          display="block"
-        />
-      ) : (
-        <Flex justify="center" flexWrap="wrap">
-          {propertyForSale.hits.map((property: TPropertySummary) => (
-            <Property property={property} key={property.id} />
-          ))}
-        </Flex>
-      )}
+      <Flex justify="center" flexWrap="wrap">
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <PropertySkeleton key={i} />
+            ))
+          : saleQuery.data?.hits.map((property: TPropertySummary) => (
+              <Property property={property} key={property.id} />
+            ))}
+      </Flex>
     </Box>
   );
 };
 
 export default HomePage;
-
-// export const loader = async ({ params, request }) => {
-//   const propertyForSale = await fetchApi(
-//     `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`
-//   );
-//   const propertyForRent = await fetchApi(
-//     `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`
-//   );
-
-//   return { propertyForSale, propertyForRent };
-// };

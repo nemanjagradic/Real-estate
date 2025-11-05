@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Flex, Box, Text, Icon, Spinner } from "@chakra-ui/react";
 import { BsFilter } from "react-icons/bs";
 import SearchFilters from "../components/SearchFilters";
@@ -7,29 +7,31 @@ import { useSearchParams } from "react-router-dom";
 import Property from "../components/Property";
 import noResults from "../svg/noresult.svg";
 import { fetchApi, baseUrl } from "../utils/fetchApi";
+import { useQuery } from "@tanstack/react-query";
 import { PropertySummaryResponseSchema } from "../schemas/propertySchemas";
-import { TPropertySummaryResponseSchema } from "../types/propertyTypes";
+import { TPropertySummaryResponse } from "../types/propertyTypes";
 import { parseSearchParams } from "../utils/parseSearchParams";
+import PropertySkeleton from "../UI/PropertySkeleton";
 
 const SearchPage = () => {
   const [searchFilters, setSearchFilters] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [active, setActive] = useState(Number(searchParams.get("page")) || 1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [properties, setProperties] = useState<TPropertySummaryResponseSchema>({
-    hits: [],
-    nbPages: 0,
-  });
 
   const paginate = (pageNumber: number) => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     setActive(pageNumber);
     searchParams.set("page", pageNumber.toString());
     setSearchParams(searchParams);
   };
 
-  useEffect(() => {
-    const fetchProperties = async () => {
+  const { data, isLoading, isFetching } = useQuery<TPropertySummaryResponse>({
+    queryKey: ["properties", searchParams.toString()],
+    staleTime: 1000 * 60 * 10,
+    queryFn: async () => {
       const {
         purpose,
         locationExternalIDs,
@@ -46,19 +48,16 @@ const SearchPage = () => {
         page,
       } = parseSearchParams(searchParams);
 
-      setLoading(true);
-      const data = await fetchApi(
+      return fetchApi(
         `${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}&hasFloorPlan=${hasFloorPlan}&hasPanorama=${hasPanorama}&page=${page}`,
         PropertySummaryResponseSchema
       );
+    },
+    placeholderData: (previousData) => previousData,
+  });
 
-      setProperties(data);
-      setTotalPages(data.nbPages as number);
-      setLoading(false);
-    };
-
-    fetchProperties();
-  }, [searchParams]);
+  const properties = data?.hits ?? [];
+  const totalPages = data?.nbPages ?? 0;
 
   return (
     <Box mt="60px">
@@ -94,17 +93,16 @@ const SearchPage = () => {
         >
           Properties {searchParams.get("purpose")}
         </Text>
-        {loading ? (
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-            margin="100px auto"
-            display="block"
-          />
-        ) : (
+        <Box position="relative" mb={4}>
+          {isFetching && !isLoading && (
+            <Flex justify="center" align="center" mb={4}>
+              <Spinner size="sm" color="blue.500" />
+              <Text ml={2} fontSize="sm" color="gray.500">
+                Loading new properties...
+              </Text>
+            </Flex>
+          )}
+
           <Flex
             flexWrap="wrap"
             justifyContent={{
@@ -115,14 +113,24 @@ const SearchPage = () => {
               xl: "space-between",
             }}
           >
-            {properties.hits.map((property) => (
-              <Property property={property} key={property.id} />
-            ))}
+            {isLoading
+              ? Array.from({ length: 24 }).map((_, i) => (
+                  <PropertySkeleton key={i} />
+                ))
+              : data?.hits.map((property) => (
+                  <Property property={property} key={property.id} />
+                ))}
           </Flex>
-        )}
+        </Box>
       </Box>
-      <Pagination totalPages={totalPages} paginate={paginate} active={active} />
-      {properties.hits.length === 0 && !loading && (
+      {properties.length > 0 && totalPages > 0 && (
+        <Pagination
+          totalPages={totalPages}
+          paginate={paginate}
+          active={active}
+        />
+      )}
+      {data?.hits?.length === 0 && !isLoading && (
         <Flex
           justify="center"
           align="center"

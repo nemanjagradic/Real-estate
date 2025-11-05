@@ -5,12 +5,15 @@ import { BsGridFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import { TPropertySummary } from "../types/propertyTypes";
 import millify from "millify";
+import { usePrefetchProperty } from "../hooks/usePrefetchProperty";
 
 type PropertyProps = {
   property: TPropertySummary;
 };
 
 const Property = ({ property }: PropertyProps) => {
+  const { handleMouseEnter, handleMouseLeave } = usePrefetchProperty();
+
   const {
     coverPhoto,
     price,
@@ -32,7 +35,11 @@ const Property = ({ property }: PropertyProps) => {
       ? `${capitalizedTitle.join(" ").substring(0, 30)}...`
       : capitalizedTitle.join(" ");
   return (
-    <Link to={`/property/${externalID}`}>
+    <Link
+      to={`/property/${externalID}`}
+      onMouseEnter={() => handleMouseEnter(externalID)}
+      onMouseLeave={handleMouseLeave}
+    >
       <Flex
         flexWrap="wrap"
         w={{ base: "90%", sm: "300px", md: "330px", lg: "385px" }}

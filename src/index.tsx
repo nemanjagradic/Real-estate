@@ -4,6 +4,9 @@ import "./index.css";
 import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
 import { theme } from "./theme";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -11,7 +14,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <App />
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
     </ChakraProvider>
   </React.StrictMode>
 );

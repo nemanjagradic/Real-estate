@@ -8,11 +8,11 @@ import {
 export type TPropertySummary = z.infer<typeof PropertySummarySchema>;
 export type TPropertyDetails = z.infer<typeof PropertyDetailsSchema>;
 
-export type TPropertySummaryResponseSchema = {
+export type TPropertySummaryResponse = {
   hits: TPropertySummary[];
   nbPages?: number;
 };
 
-export type TPropertyDetailsResponseSchema = z.infer<
+export type TPropertyDetailsResponse = z.infer<
   typeof PropertyDetailsResponseSchema
 >;

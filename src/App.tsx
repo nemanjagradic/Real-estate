@@ -3,7 +3,7 @@ import RootLayoutPage from "./pages/RootLayoutPage";
 import HomePage from "./pages/HomePage";
 import { RouterProvider } from "react-router-dom";
 import SearchPage from "./pages/SearchPage";
-import PropertyPage, { loader as loadProperty } from "./pages/PropertyPage";
+import PropertyPage from "./pages/PropertyPage";
 import ErrorPage from "./pages/ErrorPage";
 import { JSX } from "react";
 import "./App.css";
@@ -23,7 +23,6 @@ function App(): JSX.Element {
         {
           path: "/property/:id",
           element: <PropertyPage />,
-          loader: loadProperty,
         },
       ],
     },

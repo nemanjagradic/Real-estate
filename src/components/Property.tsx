@@ -35,18 +35,18 @@ const Property = ({ property }: PropertyProps) => {
       ? `${capitalizedTitle.join(" ").substring(0, 30)}...`
       : capitalizedTitle.join(" ");
   return (
-    <Link
-      to={`/property/${externalID}`}
-      onMouseEnter={() => handleMouseEnter(externalID)}
-      onMouseLeave={handleMouseLeave}
+    <Flex
+      flexWrap="wrap"
+      w={{ md: "340px", lg: "385px" }}
+      px="2"
+      pt="0"
+      pb="8"
+      cursor="pointer"
     >
-      <Flex
-        flexWrap="wrap"
-        w={{ base: "90%", sm: "300px", md: "330px", lg: "385px" }}
-        px="2"
-        pt="0"
-        pb="8"
-        cursor="pointer"
+      <Link
+        to={`/property/${externalID}`}
+        onMouseEnter={() => handleMouseEnter(externalID)}
+        onMouseLeave={handleMouseLeave}
       >
         <Box w="100%">
           <Image
@@ -80,8 +80,8 @@ const Property = ({ property }: PropertyProps) => {
           </Flex>
           <Text fontSize="lg">{formattedTitle}</Text>
         </Box>
-      </Flex>
-    </Link>
+      </Link>
+    </Flex>
   );
 };
 

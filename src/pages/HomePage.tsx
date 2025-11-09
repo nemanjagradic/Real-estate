@@ -36,10 +36,7 @@ const Banner = ({
       flexWrap="wrap"
       justifyContent="center"
       alignItems="center"
-      sx={{
-        "@media (max-width: 569px)": { margin: "8px" }, // 2 = 8px
-        "@media (min-width: 570px)": { margin: "40px" }, // 10 = 40px
-      }}
+      m={[2, 10]}
     >
       <img src={imageUrl} width={500} height={300} alt="banner" />
       <Box p="5" width={350}>

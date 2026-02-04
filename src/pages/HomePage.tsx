@@ -87,7 +87,7 @@ const HomePage = () => {
 
   const [saleQuery, rentQuery] = results;
 
-  const rentSearch = rentQuery.data?.data.home_search ?? {
+  const rentSearch = rentQuery?.data?.data?.home_search ?? {
     results: [],
     total: 0,
   };
@@ -95,7 +95,7 @@ const HomePage = () => {
     ? rentSearch.results.map(mapProperty)
     : [];
 
-  const saleSearch = saleQuery.data?.data.home_search ?? {
+  const saleSearch = saleQuery?.data?.data?.home_search ?? {
     results: [],
     total: 0,
   };

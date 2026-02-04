@@ -12,7 +12,7 @@ const PropertySummaryDescriptionSchema = z.object({
 
 export const PropertySummarySchema = z.object({
   property_id: z.string(),
-  primary_photo: z.object({ href: z.string() }),
+  primary_photo: z.object({ href: z.string() }).nullable(),
   list_price: z.number().nullable().optional(),
   list_price_min: z.number().nullable().optional(),
   description: PropertySummaryDescriptionSchema.optional(),
@@ -75,14 +75,17 @@ export const PropertyDetailsSchema = PropertySummarySchema.extend({
 });
 
 export const PropertySummaryResponseSchema = z.object({
-  data: z.object({
-    home_search: z
-      .object({
-        results: z.array(PropertySummarySchema).optional(),
-        total: z.number(),
-      })
-      .nullable(),
-  }),
+  data: z
+    .object({
+      home_search: z
+        .object({
+          results: z.array(PropertySummarySchema).optional(),
+          total: z.number(),
+        })
+        .nullable(),
+    })
+    .optional()
+    .nullable(),
 });
 
 export const PropertyDetailsResponseSchema = z.object({

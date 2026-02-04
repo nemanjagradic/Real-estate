@@ -16,9 +16,14 @@ import { useParams } from "react-router-dom";
 import { getIsVerified } from "../utils/propertyMapper";
 import PageError from "../components/PropertyPageError";
 import { displaySqft } from "../utils/displaySqft";
+import { useEffect } from "react";
 
 const PropertyPage = () => {
   const { id: property_id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [property_id]);
 
   const { data, isLoading, isFetching, isError, refetch, error } =
     useQuery<TPropertyDetailsResponse>({

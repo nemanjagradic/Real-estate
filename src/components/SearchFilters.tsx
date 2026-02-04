@@ -8,6 +8,9 @@ import {
   Spinner,
   Icon,
   Button,
+  Wrap,
+  WrapItem,
+  Checkbox,
 } from "@chakra-ui/react";
 import { MdCancel } from "react-icons/md";
 import { filterData } from "../utils/filterData";
@@ -61,7 +64,7 @@ const SearchFilters = ({ setActive }: SearchFiltersProps) => {
     const params = new URLSearchParams();
 
     Object.entries(selectFilters).forEach(([key, value]) => {
-      params.set(key, value);
+      if (value) params.set(key, value);
     });
 
     Object.entries(checkboxFilters).forEach(([key, value]) => {
@@ -106,32 +109,28 @@ const SearchFilters = ({ setActive }: SearchFiltersProps) => {
 
   return (
     <>
-      <Flex
-        bg="beige"
-        pt="20px"
-        px="40px"
-        flexWrap="wrap"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Flex bg="beige" pt="20px" justifyContent="center" alignItems="center">
         {filters
           .filter((f) => !f.purpose || f.purpose === currentPurpose)
           .map((filter) => (
             <Box p="2" key={filter.queryName}>
               {filter.type === "checkbox" ? (
-                <Box display="flex" alignItems="center">
-                  <label style={{ marginRight: "10px" }}>{filter.label}</label>
-                  <input
-                    type="checkbox"
-                    checked={!!checkboxFilters[filter.queryName]}
-                    onChange={(e) =>
-                      setCheckboxFilters((prev) => ({
-                        ...prev,
-                        [filter.queryName]: e.target.checked,
-                      }))
-                    }
-                  />
-                </Box>
+                <Wrap key={filter.queryName} align="center">
+                  <WrapItem>
+                    <Checkbox
+                      colorScheme="blue"
+                      isChecked={!!checkboxFilters[filter.queryName]}
+                      onChange={(e) =>
+                        setCheckboxFilters((prev) => ({
+                          ...prev,
+                          [filter.queryName]: e.target.checked,
+                        }))
+                      }
+                    >
+                      {filter.label}
+                    </Checkbox>
+                  </WrapItem>
+                </Wrap>
               ) : (
                 <Select
                   placeholder={filter.placeholder}

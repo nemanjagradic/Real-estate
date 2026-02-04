@@ -75,6 +75,34 @@ export const filterData: FilterItem[] = [
     queryName: "price_max",
     purpose: "for-rent",
   },
+  {
+    type: "select",
+    items: [
+      { name: "Newest", value: "newest" },
+      { name: "Price ↑", value: "lowest_price" },
+      { name: "Price ↓", value: "highest_price" },
+      { name: "Open House", value: "open_house_date" },
+      { name: "Price Reduced", value: "price_reduced_date" },
+      { name: "Largest Sqft", value: "largest_sqft" },
+      { name: "Lot Size", value: "lot_size" },
+      { name: "Sold", value: "sold_date" },
+    ],
+    placeholder: "Sort",
+    queryName: "sort",
+    purpose: "for-sale",
+  },
+
+  {
+    type: "select",
+    items: [
+      { name: "Recent", value: "recently_added_update" },
+      { name: "Price ↑", value: "lowest_price" },
+      { name: "Price ↓", value: "highest_price" },
+    ],
+    placeholder: "Sort",
+    queryName: "sort",
+    purpose: "for-rent",
+  },
 
   {
     type: "select",

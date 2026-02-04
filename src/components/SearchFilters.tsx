@@ -109,7 +109,13 @@ const SearchFilters = ({ setActive }: SearchFiltersProps) => {
 
   return (
     <>
-      <Flex bg="beige" pt="20px" justifyContent="center" alignItems="center">
+      <Flex
+        bg="beige"
+        pt="20px"
+        justify="center"
+        flexWrap="wrap"
+        alignItems="center"
+      >
         {filters
           .filter((f) => !f.purpose || f.purpose === currentPurpose)
           .map((filter) => (
@@ -175,6 +181,7 @@ const SearchFilters = ({ setActive }: SearchFiltersProps) => {
           borderColor="gray.200"
           bg="beige"
           w="300px"
+          mt="25px"
           _hover={{ bg: "darkerBeige" }}
         >
           Search Location

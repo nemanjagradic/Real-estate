@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 import Property from "./Property";
 import PropertySkeleton from "../UI/PropertySkeleton";
 import { TPropertySummary } from "../types/propertyTypes";
@@ -20,21 +20,21 @@ const PropertySection = ({
 }: Props) => {
   if (isLoading || isFetching) {
     return (
-      <Flex justify="center" flexWrap="wrap">
+      <>
         {Array.from({ length: limit }).map((_, i) => (
           <PropertySkeleton key={i} />
         ))}
-      </Flex>
+      </>
     );
   }
 
   if (properties.length > 0) {
     return (
-      <Flex justify="center" flexWrap="wrap">
+      <>
         {properties.slice(0, limit).map((property) => (
           <Property key={property.property_id} property={property} />
         ))}
-      </Flex>
+      </>
     );
   }
 

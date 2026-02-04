@@ -130,7 +130,7 @@ const PropertyPage = () => {
         <Flex
           align="center"
           p="1"
-          justify="space-between"
+          justifyContent="space-between"
           w={250}
           color="blue.400"
         >

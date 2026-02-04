@@ -26,9 +26,6 @@ const Navigation = () => {
   return (
     <Box pos="relative" w="100%">
       <Flex
-        position="fixed"
-        top="0"
-        left="0"
         w="100%"
         bg="white"
         zIndex="10"

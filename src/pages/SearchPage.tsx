@@ -164,7 +164,7 @@ const SearchPage = () => {
   };
 
   return (
-    <Box mt="60px">
+    <Box>
       <Flex
         width="100%"
         cursor="pointer"
@@ -184,7 +184,7 @@ const SearchPage = () => {
 
       {searchFilters && <SearchFilters setActive={setActive} />}
 
-      <Box margin="0 auto" width={{ base: "90%", lg: "1200px" }} maxW="1200px">
+      <Box margin="0 auto" width={{ sm: "90%" }} maxW="1200px">
         <Text fontSize="2xl" p="4" fontWeight="bold">
           Properties {purpose}
         </Text>
@@ -198,7 +198,10 @@ const SearchPage = () => {
           </Flex>
         )}
 
-        <Flex flexWrap="wrap" justify="space-between">
+        <Flex
+          flexWrap="wrap"
+          justify={{ base: "space-evenly", xl: "space-between" }}
+        >
           {displayProperties()}
         </Flex>
       </Box>

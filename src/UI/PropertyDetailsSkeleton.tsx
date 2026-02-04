@@ -6,7 +6,6 @@ const PropertyDetailsSkeleton = () => (
     <Box p="6">
       <Flex align="center" justify="space-between" mt={4}>
         <Skeleton height="20px" width="100px" />
-        <Skeleton height="30px" width="30px" borderRadius="full" />
       </Flex>
       <SkeletonText mt="4" noOfLines={3} spacing="4" />
       <Flex mt="4" gap={3}>

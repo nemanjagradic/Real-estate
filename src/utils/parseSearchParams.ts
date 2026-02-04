@@ -1,37 +1,83 @@
-export const searchParamKeys = [
-  "purpose",
-  "locationExternalIDs",
-  "categoryExternalID",
-  "bathsMin",
-  "rentFrequency",
-  "minPrice",
-  "maxPrice",
-  "roomsMin",
+export const saleSearchParamKeys = [
+  "city",
+  "state_code",
+  "property_type",
+  "baths_min",
+  "beds_min",
+  "price_min",
+  "price_max",
   "sort",
-  "areaMax",
-  "hasPanorama",
-  "hasFloorPlan",
-  "page",
+  "home_size_min",
+  "limit",
+  "offset",
 ] as const;
 
-export type SearchParamsType = Partial<
-  Record<(typeof searchParamKeys)[number], string>
+export type SaleSearchParams = Partial<
+  Record<(typeof saleSearchParamKeys)[number], string>
 >;
 
-export const parseSearchParams = (
-  params: URLSearchParams
-): SearchParamsType => ({
-  purpose: params.get("purpose") || "for-rent",
-  locationExternalIDs: params.get("locationExternalIDs") || "5002",
-  categoryExternalID: params.get("categoryExternalID") || "4",
-  bathsMin: params.get("bathsMin") || "0",
-  rentFrequency: params.get("rentFrequency") || "yearly",
-  minPrice: params.get("minPrice") || "0",
-  maxPrice: params.get("maxPrice") || "1000000",
-  roomsMin: params.get("roomsMin") || "0",
-  sort: params.get("sort") || "price-desc",
-  areaMax: params.get("areaMax") || "35000",
-  hasPanorama: params.get("hasPanorama") || "false",
-  hasFloorPlan: params.get("hasFloorPlan") || "false",
-  page: params.get("page") || "1",
+export const rentSearchParamKeys = [
+  ...saleSearchParamKeys,
+  "cats_ok",
+  "dogs_ok",
+] as const;
+
+export type RentSearchParams = Partial<
+  Record<(typeof rentSearchParamKeys)[number], string | boolean>
+>;
+
+const getParam = (params: URLSearchParams, key: string) => {
+  const value = params.get(key);
+  return value && value !== "" ? value : undefined;
+};
+
+const getBoolParam = (params: URLSearchParams, key: string) => {
+  const value = params.get(key);
+  return value === "true" ? true : value === "false" ? false : undefined;
+};
+
+export const parseSaleSearchParams = (
+  params: URLSearchParams,
+): SaleSearchParams => ({
+  city: getParam(params, "city") ?? "Detroit",
+  state_code: getParam(params, "state_code") ?? "MI",
+  property_type: getParam(params, "property_type"),
+  beds_min: getParam(params, "beds_min") ?? "1",
+  baths_min: getParam(params, "baths_min") ?? "1",
+  price_min: getParam(params, "price_min"),
+  price_max: getParam(params, "price_max"),
+  home_size_min: getParam(params, "home_size_min") ?? "750",
+  sort: getParam(params, "sort"),
+  limit: getParam(params, "limit") ?? "15",
+  offset: getParam(params, "offset") ?? "0",
 });
+
+export const parseRentSearchParams = (
+  params: URLSearchParams,
+): RentSearchParams => ({
+  city: getParam(params, "city") ?? "Detroit",
+  state_code: getParam(params, "state_code") ?? "MI",
+  property_type: getParam(params, "property_type"),
+  beds_min: getParam(params, "beds_min") ?? "1",
+  baths_min: getParam(params, "baths_min") ?? "1",
+  price_min: getParam(params, "price_min"),
+  price_max: getParam(params, "price_max"),
+  home_size_min: getParam(params, "home_size_min") ?? "500",
+  sort: getParam(params, "sort"),
+  cats_ok: getBoolParam(params, "cats_ok"),
+  dogs_ok: getBoolParam(params, "dogs_ok"),
+  limit: getParam(params, "limit") ?? "15",
+  offset: getParam(params, "offset") ?? "0",
+});
+
+export type GenericSearchParams = SaleSearchParams | RentSearchParams;
+
+export const parseSearchParams = (
+  params: URLSearchParams,
+): GenericSearchParams => {
+  const purpose = params.get("purpose") ?? "for-rent";
+
+  return purpose === "for-sale"
+    ? parseSaleSearchParams(params)
+    : parseRentSearchParams(params);
+};

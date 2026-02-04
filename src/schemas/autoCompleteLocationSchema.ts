@@ -1,17 +1,17 @@
 import { z } from "zod";
 
-const AutoCompleteLocationSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  externalID: z.string(),
+export const LocationSuggestSchema = z.object({
+  slug_id: z.string(),
+  city: z.string(),
+  state_code: z.string(),
+  geo_id: z.string().optional(),
 });
 
-export const AutoCompleteLocationResponseSchema = z.object({
-  hits: z.array(AutoCompleteLocationSchema),
+export const LocationSuggestResponseSchema = z.object({
+  data: z.array(LocationSuggestSchema),
 });
 
-export type TAutoCompleteLocation = z.infer<typeof AutoCompleteLocationSchema>;
-
-export type TAutoCompleteLocationResponse = z.infer<
-  typeof AutoCompleteLocationResponseSchema
+export type TLocationSuggest = z.infer<typeof LocationSuggestSchema>;
+export type TLocationSuggestResponse = z.infer<
+  typeof LocationSuggestResponseSchema
 >;

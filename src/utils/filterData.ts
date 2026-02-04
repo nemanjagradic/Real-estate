@@ -1,14 +1,16 @@
-type SelectFilter = {
+export type SelectFilter = {
   type: "select";
   items: { name: string; value: string }[];
   placeholder: string;
   queryName: string;
+  purpose?: "for-sale" | "for-rent";
 };
 
-type CheckboxFilter = {
+export type CheckboxFilter = {
   type: "checkbox";
   label: string;
   queryName: string;
+  purpose?: "for-sale" | "for-rent";
 };
 
 export type FilterItem = SelectFilter | CheckboxFilter;
@@ -23,139 +25,139 @@ export const filterData: FilterItem[] = [
     placeholder: "Purpose",
     queryName: "purpose",
   },
-  {
-    type: "select",
-    items: [
-      { name: "Daily", value: "daily" },
-      { name: "Weekly", value: "weekly" },
-      { name: "Monthly", value: "monthly" },
-      { name: "Yearly", value: "yearly" },
-    ],
-    placeholder: "Rent Frequency",
-    queryName: "rentFrequency",
-  },
-  {
-    type: "select",
-    items: [
-      { name: "10,000", value: "10000" },
-      { name: "20,000", value: "20000" },
-      { name: "30,000", value: "30000" },
-      { name: "40,000", value: "40000" },
-      { name: "50,000", value: "50000" },
-      { name: "60,000", value: "60000" },
-      { name: "85,000", value: "85000" },
-    ],
-    placeholder: "Min Price(AED)",
-    queryName: "minPrice",
-  },
+
   {
     type: "select",
     items: [
       { name: "50,000", value: "50000" },
-      { name: "60,000", value: "60000" },
-      { name: "85,000", value: "85000" },
-      { name: "110,000", value: "110000" },
-      { name: "135,000", value: "135000" },
-      { name: "160,000", value: "160000" },
-      { name: "185,000", value: "185000" },
+      { name: "100,000", value: "100000" },
       { name: "200,000", value: "200000" },
-      { name: "300,000", value: "300000" },
-      { name: "400,000", value: "400000" },
       { name: "500,000", value: "500000" },
-      { name: "600,000", value: "600000" },
-      { name: "700,000", value: "700000" },
-      { name: "800,000", value: "800000" },
-      { name: "900,000", value: "900000" },
-      { name: "1000,000", value: "1000000" },
+      { name: "1,000,000", value: "1000000" },
     ],
-    placeholder: "Max Price(AED)",
-    queryName: "maxPrice",
+    placeholder: "Min Price",
+    queryName: "price_min",
+    purpose: "for-sale",
   },
   {
     type: "select",
     items: [
-      { name: "Lowest Price", value: "price-asc" },
-      { name: "Highest Price", value: "price-des" },
-      { name: "Newest", value: "date-asc" },
-      { name: "Oldest", value: "date-desc" },
-      { name: "Verified", value: "verified-score" },
-      { name: "City Level Score", value: "city-level-score" },
+      { name: "1,000", value: "1000" },
+      { name: "1,500", value: "1500" },
+      { name: "2,000", value: "2000" },
+      { name: "2,500", value: "2500" },
+      { name: "3,000", value: "3000" },
     ],
-    placeholder: "Sort",
-    queryName: "sort",
+    placeholder: "Min Price",
+    queryName: "price_min",
+    purpose: "for-rent",
+  },
+
+  {
+    type: "select",
+    items: [
+      { name: "1,000,000", value: "1000000" },
+      { name: "750,000", value: "750000" },
+      { name: "500,000", value: "500000" },
+    ],
+    placeholder: "Max Price",
+    queryName: "price_max",
+    purpose: "for-sale",
   },
   {
     type: "select",
     items: [
+      { name: "3,000", value: "3000" },
+      { name: "2,500", value: "2500" },
+      { name: "2,000", value: "2000" },
+    ],
+    placeholder: "Max Price",
+    queryName: "price_max",
+    purpose: "for-rent",
+  },
+
+  {
+    type: "select",
+    items: [
+      { name: "750", value: "750" },
       { name: "1000", value: "1000" },
-      { name: "2000", value: "2000" },
-      { name: "3000", value: "3000" },
-      { name: "4000", value: "4000" },
-      { name: "5000", value: "5000" },
-      { name: "10000", value: "10000" },
-      { name: "20000", value: "20000" },
+      { name: "1250", value: "1250" },
+      { name: "1500", value: "1500" },
     ],
-    placeholder: "Max Area(sqft)",
-    queryName: "areaMax",
+    placeholder: "Home Size Min",
+    queryName: "home_size_min",
+    purpose: "for-sale",
   },
   {
     type: "select",
     items: [
-      { name: "1", value: "1" },
-      { name: "2", value: "2" },
-      { name: "3", value: "3" },
-      { name: "4", value: "4" },
-      { name: "5", value: "5" },
-      { name: "6", value: "6" },
-      { name: "7", value: "7" },
-      { name: "8", value: "8" },
-      { name: "9", value: "9" },
-      { name: "10", value: "10" },
+      { name: "500", value: "500" },
+      { name: "750", value: "750" },
+      { name: "1000", value: "1000" },
     ],
-    placeholder: "Rooms",
-    queryName: "roomsMin",
+    placeholder: "Home Size Min",
+    queryName: "home_size_min",
+    purpose: "for-rent",
   },
+
   {
     type: "select",
     items: [
-      { name: "1", value: "1" },
-      { name: "2", value: "2" },
-      { name: "3", value: "3" },
-      { name: "4", value: "4" },
-      { name: "5", value: "5" },
-      { name: "6", value: "6" },
-      { name: "7", value: "7" },
-      { name: "8", value: "8" },
-      { name: "9", value: "9" },
-      { name: "10", value: "10" },
-    ],
-    placeholder: "Baths",
-    queryName: "bathsMin",
-  },
-  {
-    type: "select",
-    items: [
-      { name: "Apartment", value: "4" },
-      { name: "Townhouses", value: "16" },
-      { name: "Villas", value: "3" },
-      { name: "Penthouses", value: "18" },
-      { name: "Hotel Apartments", value: "21" },
-      { name: "Villa Compound", value: "19" },
-      { name: "Residential Plot", value: "14" },
-      { name: "Residential Floor", value: "12" },
-      { name: "Residential Building", value: "17" },
+      { name: "Single Family", value: "single_family" },
+      { name: "Multi Family", value: "multi_family" },
+      { name: "Mobile", value: "mobile" },
+      { name: "Land", value: "land" },
+      { name: "Farm", value: "farm" },
     ],
     placeholder: "Property Type",
-    queryName: "categoryExternalID",
+    queryName: "property_type",
+    purpose: "for-sale",
+  },
+  {
+    type: "select",
+    items: [
+      { name: "Apartment", value: "apartment" },
+      { name: "Townhome", value: "townhome" },
+      { name: "Coop", value: "coop" },
+      { name: "Condo", value: "condo" },
+      { name: "Condop", value: "condop" },
+      { name: "Single Family", value: "single_family" },
+    ],
+    placeholder: "Property Type",
+    queryName: "property_type",
+    purpose: "for-rent",
+  },
+
+  {
+    type: "select",
+    items: Array.from({ length: 10 }, (_, i) => ({
+      name: `${i + 1}`,
+      value: `${i + 1}`,
+    })),
+    placeholder: "Beds Min",
+    queryName: "beds_min",
+  },
+
+  {
+    type: "select",
+    items: Array.from({ length: 10 }, (_, i) => ({
+      name: `${i + 1}`,
+      value: `${i + 1}`,
+    })),
+    placeholder: "Baths Min",
+    queryName: "baths_min",
+  },
+
+  {
+    type: "checkbox",
+    label: "Cats Friendly",
+    queryName: "cats_ok",
+    purpose: "for-rent",
   },
   {
     type: "checkbox",
-    label: "Panorama",
-    queryName: "hasPanorama",
-  },
-  {
-    type: "checkbox",
-    label: "Floor Plan",
-    queryName: "hasFloorPlan",
+    label: "Dogs Friendly",
+    queryName: "dogs_ok",
+    purpose: "for-rent",
   },
 ];

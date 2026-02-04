@@ -7,14 +7,14 @@ export const usePrefetchProperty = () => {
   const queryClient = useQueryClient();
   const hoverTimeout = useRef<number | null>(null);
 
-  const handleMouseEnter = (externalID: string) => {
+  const handleMouseEnter = (property_id: string) => {
     hoverTimeout.current = window.setTimeout(() => {
       queryClient.prefetchQuery({
-        queryKey: ["propertyDetails", externalID],
+        queryKey: ["propertyDetails", property_id],
         queryFn: () =>
           fetchApi(
-            `${baseUrl}/properties/detail?externalID=${externalID}`,
-            PropertyDetailsResponseSchema
+            `${baseUrl}/v3/property-detail?property_id=${property_id}`,
+            PropertyDetailsResponseSchema,
           ),
         staleTime: 1000 * 60 * 10,
       });

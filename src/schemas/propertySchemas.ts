@@ -1,49 +1,90 @@
 import { z } from "zod";
 
+const PropertySummaryDescriptionSchema = z.object({
+  beds: z.number().nullable(),
+  beds_min: z.number().nullable().optional(),
+  baths: z.number().nullable(),
+  baths_min: z.number().nullable().optional(),
+  sqft: z.number().nullable(),
+  sqft_min: z.number().nullable().optional(),
+  lot_sqft: z.number().nullable().optional(),
+});
+
 export const PropertySummarySchema = z.object({
-  id: z.number(),
-  coverPhoto: z.object({
-    url: z.string(),
-  }),
-  price: z.number(),
-  rentFrequency: z.string().nullable().optional(),
-  rooms: z.number(),
-  title: z.string(),
-  baths: z.number(),
-  area: z.number(),
-  agency: z.object({
-    logo: z.object({
-      url: z.string(),
+  property_id: z.string(),
+  primary_photo: z.object({ href: z.string() }),
+  list_price: z.number().nullable().optional(),
+  list_price_min: z.number().nullable().optional(),
+  description: PropertySummaryDescriptionSchema.optional(),
+  location: z.object({
+    address: z.object({
+      line: z.string(),
     }),
   }),
-  isVerified: z.boolean(),
-  externalID: z.string(),
-  purpose: z.string(),
+  branding: z
+    .array(
+      z.object({
+        __typename: z.string().optional(),
+        name: z.string().nullable(),
+        photo: z.string().nullable(),
+        type: z.string(),
+      }),
+    )
+    .optional(),
+  source: z
+    .object({
+      type: z.string().optional(),
+      agents: z
+        .array(
+          z.object({
+            office_name: z.string().nullable().optional(),
+          }),
+        )
+        .optional()
+        .nullable(),
+    })
+    .optional(),
+  advertisers: z
+    .array(
+      z.object({
+        type: z.string(),
+      }),
+    )
+    .optional(),
+  status: z.string(),
 });
 
 export const PropertyDetailsSchema = PropertySummarySchema.extend({
-  description: z.string().nullable().optional(),
-  type: z.string().nullable().optional(),
-  furnishingStatus: z.string().nullable().optional(),
-  amenities: z
-    .array(z.object({ text: z.string() }))
-    .nullable()
-    .optional(),
-
-  photos: z
-    .array(
-      z.object({
-        id: z.number(),
-        url: z.string(),
-        orderIndex: z.number().nullable().optional(),
-      })
-    )
-    .nullable()
-    .optional(),
+  description: PropertySummaryDescriptionSchema.extend({
+    text: z.string(),
+    type: z.string(),
+  }),
+  tags: z.array(z.string()).optional(),
+  photos: z.array(
+    z.object({
+      href: z.string(),
+    }),
+  ),
+  details: z.array(
+    z.object({
+      parent_category: z.string(),
+      category: z.string(),
+      text: z.array(z.string()).nullable().optional(),
+    }),
+  ),
 });
 
 export const PropertySummaryResponseSchema = z.object({
-  hits: z.array(PropertySummarySchema),
-  nbPages: z.number(),
+  data: z.object({
+    home_search: z
+      .object({
+        results: z.array(PropertySummarySchema).optional(),
+        total: z.number(),
+      })
+      .nullable(),
+  }),
 });
-export const PropertyDetailsResponseSchema = PropertyDetailsSchema;
+
+export const PropertyDetailsResponseSchema = z.object({
+  data: PropertyDetailsSchema.optional(),
+});

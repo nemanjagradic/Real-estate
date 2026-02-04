@@ -9,7 +9,7 @@ const Footer = () => {
       color="gray.600"
       borderColor="gray.100"
     >
-      2023, realestate, Inc.
+      2026, realestate, Inc.
     </Box>
   );
 };

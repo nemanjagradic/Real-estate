@@ -14,6 +14,10 @@ export default function Pagination({
   const getPages = (): (number | string)[] => {
     if (totalPages <= 0) return [];
 
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
     const pages: (number | string)[] = [];
 
     pages.push(1);
@@ -69,7 +73,7 @@ export default function Pagination({
           <Text key={`ellipsis_${idx}`} px={2} fontWeight="bold">
             …
           </Text>
-        )
+        ),
       )}
     </Flex>
   );

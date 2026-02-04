@@ -1,14 +1,11 @@
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import {
-  TPropertySummary,
-  TPropertySummaryResponse,
-} from "../types/propertyTypes";
+import { TPropertySummaryResponse } from "../types/propertyTypes";
 import { PropertySummaryResponseSchema } from "../schemas/propertySchemas";
 import { fetchApi, baseUrl } from "../utils/fetchApi";
-import Property from "../components/Property";
-import PropertySkeleton from "../UI/PropertySkeleton";
 import { useQueries } from "@tanstack/react-query";
+import { mapProperty } from "../utils/propertyMapper";
+import PropertySection from "../components/PropertiesSection";
 
 type BannerProps = {
   imageUrl: string;
@@ -30,64 +27,59 @@ const Banner = ({
   desc2,
   link,
   buttonText,
-}: BannerProps) => {
-  return (
-    <Flex
-      flexWrap="wrap"
-      justifyContent="center"
-      alignItems="center"
-      m={[2, 10]}
-    >
-      <img src={imageUrl} width={500} height={300} alt="banner" />
-      <Box p="5" width={350}>
-        <Text
-          fontSize={18}
-          color="gray.500"
-          fontWeight="medium"
-          textTransform="uppercase"
-        >
-          {purpose}
-        </Text>
-        <Text fontSize={26} fontWeight="bold">
-          {title1}
-          <br />
-          {title2}
-        </Text>
-        <Text color="gray.700" fontSize={16} pt={5} pb={5} fontWeight="medium">
-          {desc1}
-          <br />
-          {desc2}
-        </Text>
-        <Button
-          fontSize={16}
-          bg="darkerBeige"
-          _hover={{ bg: "beige" }}
-          color="black"
-        >
-          <Link to={link}>{buttonText}</Link>
-        </Button>
-      </Box>
-    </Flex>
-  );
-};
+}: BannerProps) => (
+  <Flex flexWrap="wrap" justifyContent="center" alignItems="center" m={[2, 10]}>
+    <img src={imageUrl} width={500} height={300} alt="banner" />
+    <Box p="5" width={350}>
+      <Text
+        fontSize={18}
+        color="gray.500"
+        fontWeight="medium"
+        textTransform="uppercase"
+      >
+        {purpose}
+      </Text>
+      <Text fontSize={26} fontWeight="bold">
+        {title1}
+        <br />
+        {title2}
+      </Text>
+      <Text color="gray.700" fontSize={16} pt={5} pb={5} fontWeight="medium">
+        {desc1}
+        <br />
+        {desc2}
+      </Text>
+      <Button
+        fontSize={16}
+        bg="darkerBeige"
+        _hover={{ bg: "beige" }}
+        color="black"
+      >
+        <Link to={link}>{buttonText}</Link>
+      </Button>
+    </Box>
+  </Flex>
+);
 
 const HomePage = () => {
   const results = useQueries({
     queries: [
       {
         queryKey: ["properties", "for-sale"],
+        staleTime: 1000 * 60 * 10,
         queryFn: (): Promise<TPropertySummaryResponse> =>
           fetchApi(
-            `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`,
-            PropertySummaryResponseSchema
+            `${baseUrl}/v3/for-sale?state_code=NY&city=New%20York&beds_min=1&baths_min=1&home_size_min=750`,
+            PropertySummaryResponseSchema,
           ),
       },
       {
         queryKey: ["properties", "for-rent"],
+        staleTime: 1000 * 60 * 10,
         queryFn: (): Promise<TPropertySummaryResponse> =>
           fetchApi(
-            `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`,
-            PropertySummaryResponseSchema
+            `${baseUrl}/v3/for-rent?state_code=NY&city=New%20York&beds_min=1&baths_min=1&home_size_min=500`,
+            PropertySummaryResponseSchema,
           ),
       },
     ],
@@ -95,9 +87,25 @@ const HomePage = () => {
 
   const [saleQuery, rentQuery] = results;
 
-  const isLoading = saleQuery.isLoading || rentQuery.isLoading;
+  const rentSearch = rentQuery.data?.data.home_search ?? {
+    results: [],
+    total: 0,
+  };
+  const rentProperties = Array.isArray(rentSearch.results)
+    ? rentSearch.results.map(mapProperty)
+    : [];
 
-  console.log(saleQuery, rentQuery);
+  const saleSearch = saleQuery.data?.data.home_search ?? {
+    results: [],
+    total: 0,
+  };
+  const saleProperties = Array.isArray(saleSearch.results)
+    ? saleSearch.results.map(mapProperty)
+    : [];
+
+  const isLoading = saleQuery.isLoading || rentQuery.isLoading;
+  const isRentFetching = rentQuery.isFetching;
+  const isSaleFetching = saleQuery.isFetching;
 
   return (
     <Box mt="80px">
@@ -112,14 +120,14 @@ const HomePage = () => {
         imageUrl="https://bayut-production.s3.eu-central-1.amazonaws.com/image/145426814/33973352624c48628e41f2ec460faba4"
       />
       <Flex justify="center" flexWrap="wrap">
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <PropertySkeleton key={i} />
-            ))
-          : rentQuery.data?.hits.map((property: TPropertySummary) => (
-              <Property property={property} key={property.id} />
-            ))}
+        <PropertySection
+          properties={rentProperties}
+          isLoading={isLoading}
+          isFetching={isRentFetching}
+          onRetry={rentQuery.refetch}
+        />
       </Flex>
+
       <Banner
         purpose="Buy a home"
         title1=" Find, Buy & Own Your"
@@ -130,13 +138,12 @@ const HomePage = () => {
         imageUrl="https://bayut-production.s3.eu-central-1.amazonaws.com/image/110993385/6a070e8e1bae4f7d8c1429bc303d2008"
       />
       <Flex justify="center" flexWrap="wrap">
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, i) => (
-              <PropertySkeleton key={i} />
-            ))
-          : saleQuery.data?.hits.map((property: TPropertySummary) => (
-              <Property property={property} key={property.id} />
-            ))}
+        <PropertySection
+          properties={saleProperties}
+          isLoading={isLoading}
+          isFetching={isSaleFetching}
+          onRetry={saleQuery.refetch}
+        />
       </Flex>
     </Box>
   );

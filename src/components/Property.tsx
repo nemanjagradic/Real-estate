@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Box, Flex, Text, Spacer, Avatar, Image } from "@chakra-ui/react";
+import { Box, Flex, Text, Image } from "@chakra-ui/react";
 import { FaBed, FaBath } from "react-icons/fa";
 import { BsGridFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
@@ -15,25 +15,34 @@ const Property = ({ property }: PropertyProps) => {
   const { handleMouseEnter, handleMouseLeave } = usePrefetchProperty();
 
   const {
-    coverPhoto,
-    price,
-    rentFrequency,
-    rooms,
-    title,
-    baths,
-    area,
-    agency,
+    property_id,
+    primary_photo,
+    list_price,
+    list_price_min,
+    description,
     isVerified,
-    externalID,
   } = property;
 
-  const capitalizedTitle = title?.split(" ").map((word) => {
-    return word[0]?.toUpperCase() + word.slice(1).toLowerCase();
-  });
-  const formattedTitle =
-    title.length > 30
-      ? `${capitalizedTitle.join(" ").substring(0, 30)}...`
-      : capitalizedTitle.join(" ");
+  const line = property.location?.address?.line;
+  const beds = description?.beds || description?.beds_min || "N/A";
+  const baths = description?.baths || description?.baths_min || "N/A";
+  const sqft =
+    description?.sqft || description?.sqft_min || description?.lot_sqft;
+  const price = list_price || list_price_min;
+
+  const displaySqft = (desc: {
+    sqft: number | null;
+    sqft_min?: number | null | undefined;
+    lot_sqft?: number | null | undefined;
+  }): string => {
+    if (desc.lot_sqft) {
+      return "lot sqft";
+    } else if (desc.sqft || desc.sqft_min) {
+      return "sqft";
+    }
+    return "N/A";
+  };
+
   return (
     <Flex
       flexWrap="wrap"
@@ -44,29 +53,28 @@ const Property = ({ property }: PropertyProps) => {
       cursor="pointer"
     >
       <Link
-        to={`/property/${externalID}`}
-        onMouseEnter={() => handleMouseEnter(externalID)}
+        style={{ width: "100%" }}
+        to={`/property/${property_id}`}
+        onMouseEnter={() => handleMouseEnter(property_id)}
         onMouseLeave={handleMouseLeave}
       >
         <Box w="100%">
           <Image
             w="100%"
             h="285px"
-            src={coverPhoto ? coverPhoto.url : "./images/house.jpg"}
+            src={primary_photo?.href || "./images/house.jpg"}
             alt="house"
+            objectFit="cover"
           />
         </Box>
         <Box w="full">
-          <Flex pt={2} align="center" justify="space-between">
+          <Flex pt={2} align="center">
             <Box pr={3} color="green.400">
               {isVerified && <GoVerified />}
             </Box>
             <Text fontWeight="bold" fontSize="lg">
-              AED {millify(price)}
-              {rentFrequency && `/${rentFrequency}`}
+              USD {millify(price as number)}{" "}
             </Text>
-            <Spacer />
-            <Avatar size="sm" src={agency?.logo?.url} />
           </Flex>
           <Flex
             align="center"
@@ -75,10 +83,11 @@ const Property = ({ property }: PropertyProps) => {
             w={250}
             color="blue.400"
           >
-            {rooms} <FaBed /> | {baths} <FaBath /> | {millify(area)} sqft
+            {beds} <FaBed /> | {baths} <FaBath /> | {sqft && millify(sqft)}{" "}
+            {description && displaySqft(description)}
             <BsGridFill />
           </Flex>
-          <Text fontSize="lg">{formattedTitle}</Text>
+          <Text fontSize="lg">{line}</Text>
         </Box>
       </Link>
     </Flex>

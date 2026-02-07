@@ -56,7 +56,7 @@ export const PropertySummarySchema = z.object({
 
 export const PropertyDetailsSchema = PropertySummarySchema.extend({
   description: PropertySummaryDescriptionSchema.extend({
-    text: z.string(),
+    text: z.string().nullable(),
     type: z.string(),
   }),
   tags: z.array(z.string()).optional(),
